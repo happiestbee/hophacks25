@@ -33,33 +33,33 @@ export default function LearnMore() {
   const factors = [
     {
       icon: Heart,
-      title: "Eating Habits",
-      description: "Caloric and food group restrictions are common in women with HA. Research shows the average planned caloric intake was 1481 calories a day - a level usually recommended for weight loss, not maintenance.",
-      encouragement: "Adequate nutrition is essential for hormonal health and recovery. Your body needs fuel to function optimally."
+      title: "Eating & Nutrition",
+      description: "Restrictive eating patterns, whether from eating disorders, diet culture, food fears, or simply inadequate intake, can trigger HA. This includes caloric restriction, eliminating food groups, or having rigid food rules that create energy deficiency.",
+      encouragement: "Nourishing your body with adequate, varied nutrition is an act of self-care and healing."
     },
     {
       icon: Activity,
-      title: "Exercise",
-      description: "Many women with HA exercise intensely. Research indicates that exercising 2+ hours daily, 7 days a week significantly increases HA risk. Exercise intensity often increases when periods stop.",
-      encouragement: "Movement should bring joy and energy, not exhaustion. Finding balance is key to recovery."
+      title: "Exercise & Movement",
+      description: "Excessive exercise relative to energy intake can contribute to HA. This affects not just competitive athletes, but also fitness enthusiasts, those using exercise to manage body image concerns, or anyone with compulsive exercise patterns.",
+      encouragement: "Gentle, joyful movement that honors your body's needs supports both physical and mental well-being."
     },
     {
       icon: Scale,
-      title: "Weight and Weight Loss",
-      description: "It's not just severely underweight women who develop HA. While 33% had a BMI less than 18.5, 67% had a BMI over 18.5. Importantly, 82% had lost 10+ pounds prior to developing HA.",
-      encouragement: "Your worth is not determined by a number on a scale. Health comes in many shapes and sizes."
+      title: "Body Weight & Image",
+      description: "Significant weight loss, body dysmorphia, or being below your natural set point can trigger HA. This affects people across the weight spectrum - HA isn't limited to those who are underweight.",
+      encouragement: "Your body deserves respect and care at every size. Healing your relationship with your body is part of recovery."
     },
     {
       icon: Brain,
-      title: "Stress",
-      description: "Both acute stressful events and chronic stress contribute to HA. The combination with other factors is particularly impactful. Many experience stress from trying to live up to perfectionist goals.",
-      encouragement: "Learning to manage stress and practice self-compassion is a powerful step toward healing."
+      title: "Stress & Mental Health",
+      description: "Chronic stress, perfectionism, anxiety, depression, trauma, major life changes, or overwhelming academic/work pressures can all contribute to HA by disrupting the hypothalamic-pituitary axis.",
+      encouragement: "Mental health support and stress management are essential components of healing and recovery."
     },
     {
       icon: Dna,
-      title: "Genetics",
-      description: "Genetic mutations have been found in proteins involved in regulation of the menstrual cycle in women with HA. This suggests a potential genetic susceptibility to loss of periods.",
-      encouragement: "Understanding genetic factors helps us approach recovery with patience and personalized care."
+      title: "Individual Factors",
+      description: "Genetics, personality traits (like perfectionism), sensitivity to stress, metabolic factors, and individual hormone sensitivity all influence HA risk. Some people may be more susceptible than others.",
+      encouragement: "Understanding your unique factors helps create a personalized, compassionate approach to recovery."
     }
   ]
 
@@ -70,7 +70,7 @@ export default function LearnMore() {
     },
     {
       question: "Do I really need to gain weight to recover?",
-      answer: "Not everyone with HA needs to gain weight, but many do. About 67% of women with HA have a BMI over 18.5, but 82% experienced significant weight loss before developing HA. Your body may need to return to its natural set point weight to restore hormonal function. A registered dietitian experienced with HA can help determine if weight restoration is necessary for your individual recovery."
+      answer: "Not everyone with HA needs to gain weight, but many do. Weight restoration depends on your individual situation - whether you've experienced recent weight loss, are below your natural set point, or have a history of restrictive eating. HA can affect people across the weight spectrum, including those at 'normal' weights. Recovery often requires returning to your body's natural set point, which may be higher than your current weight. A registered dietitian experienced with HA can help determine what's right for your individual recovery."
     },
     {
       question: "Can I still exercise during HA recovery?",
@@ -82,11 +82,11 @@ export default function LearnMore() {
     },
     {
       question: "What should I eat during HA recovery?",
-      answer: "Focus on adequate calories, regular meals, and including all food groups. Many women with HA have been under-eating, so increasing overall intake is often necessary. Include healthy fats (crucial for hormone production), complex carbohydrates, and adequate protein. Avoid restrictive diets or 'clean eating' rules. A registered dietitian can help create a personalized meal plan that supports your recovery goals."
+      answer: "Recovery nutrition focuses on adequacy, variety, and healing your relationship with food. This means eating enough calories to support your body's needs, including all food groups without restriction, and challenging food fears or rules that may have contributed to HA. For those with eating disorder histories, this process requires specialized support. Focus on mechanical eating (eating regardless of hunger cues), including feared foods, and prioritizing nourishment over 'health' rules. A registered dietitian experienced with HA and eating disorders is essential for personalized guidance."
     },
     {
       question: "Can stress alone cause HA?",
-      answer: "While stress is a significant factor, HA is typically caused by a combination of factors including inadequate nutrition, excessive exercise, weight loss, stress, and sometimes genetic predisposition. Chronic stress can disrupt the hypothalamic-pituitary-ovarian axis, but it usually works alongside other factors. Managing stress through therapy, mindfulness, or lifestyle changes is an important part of recovery."
+      answer: "Severe chronic stress can contribute significantly to HA, especially when combined with other factors. This includes academic pressure, work stress, perfectionism, trauma, major life changes, mental health conditions, or family dynamics. For some people, psychological stress may be the primary driver, while others may have multiple contributing factors including nutrition, exercise, or body image concerns. Mental health support, therapy, and stress management are crucial components of recovery for everyone with HA."
     },
     {
       question: "Is HA the same as PCOS?",
@@ -133,11 +133,15 @@ export default function LearnMore() {
               </span>
             </h1>
             <p className="text-xl text-[#666666] mb-8 max-w-3xl mx-auto leading-relaxed">
-              Understanding the 5 key factors and path to recovery
+              Understanding the causes, health risks, and path to recovery for everyone affected by HA
             </p>
-            <div className="bg-white/80 rounded-lg p-6 max-w-2xl mx-auto border border-[#87C4BB]/20">
-              <p className="text-[#333333] font-medium">
-                HA is a component of the female athlete triad and relative energy deficiency in sport (RED-S)
+            <div className="bg-white/80 rounded-lg p-6 max-w-3xl mx-auto border border-[#87C4BB]/20">
+              <p className="text-[#333333] font-medium mb-2">
+                HA affects people from all walks of life - not just athletes
+              </p>
+              <p className="text-[#666666] text-sm">
+                Whether related to eating disorders, high stress, perfectionism, body image concerns, or energy imbalance, 
+                HA is a serious condition that requires understanding and compassionate care.
               </p>
             </div>
           </motion.div>
@@ -166,8 +170,9 @@ export default function LearnMore() {
                     results in missing periods for three months or more.
                   </p>
                   <p>
-                    HA is a component of the female athlete triad and relative energy deficiency in sport (RED-S), 
-                    affecting not just athletes but anyone experiencing energy imbalance.
+                    HA affects people from diverse backgrounds and circumstances - athletes, individuals with eating disorders, 
+                    those experiencing chronic stress, people with body dysmorphia, perfectionists, and anyone facing 
+                    significant life pressures or energy imbalance.
                   </p>
                   <div className="bg-[#87C4BB]/10 rounded-lg p-6 border border-[#87C4BB]/20">
                     <p className="text-[#87C4BB] font-semibold text-xl mb-2">
@@ -179,8 +184,9 @@ export default function LearnMore() {
                     </p>
                   </div>
                   <p>
-                    Understanding HA starts with recognizing that it's your body's protective response - 
-                    not a failure, but a signal that needs attention and care.
+                    Understanding HA starts with recognizing that it's your body's protective response to stress, 
+                    inadequate nourishment, or overwhelming demands - not a personal failure, but a signal that 
+                    deserves attention, compassion, and care.
                   </p>
                 </div>
               </CardContent>
@@ -245,9 +251,9 @@ export default function LearnMore() {
         </div>
       </section>
 
-      {/* Symptoms Section */}
+      {/* Health Risks & Symptoms Section */}
       <section className="py-16 px-4 bg-gradient-to-br from-[#C1A7E1]/10 to-[#FFB4A2]/10">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <motion.div
             initial="initial"
             whileInView="animate"
@@ -256,46 +262,116 @@ export default function LearnMore() {
             className="text-center mb-12"
           >
             <h2 className="text-4xl font-bold text-[#333333] mb-6">
-              Recognizing the Symptoms
+              Health Risks & Symptoms
             </h2>
-            <p className="text-xl text-[#666666] max-w-3xl mx-auto leading-relaxed">
-              HA affects more than just your menstrual cycle. Understanding these symptoms can help you 
-              recognize when your body needs support and care.
+            <p className="text-xl text-[#666666] max-w-4xl mx-auto leading-relaxed">
+              HA affects your entire body, not just your menstrual cycle. Some consequences are immediately noticeable, 
+              while others are serious health risks that develop silently over time.
             </p>
           </motion.div>
           
+          {/* Immediate Symptoms */}
           <motion.div
             initial="initial"
             whileInView="animate"
             viewport={{ once: true, margin: "-50px" }}
             variants={staggerContainer}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="mb-12"
           >
-            {[
-              "Loss of menstrual periods (3+ months)",
-              "Chronic fatigue and low energy",
-              "Hair loss or thinning",
-              "Decreased bone density",
-              "Cold intolerance",
-              "Sleep disturbances",
-              "Mood changes and irritability",
-              "Loss of libido",
-              "Digestive issues",
-              "Frequent injuries or slow healing",
-              "Brain fog and difficulty concentrating",
-              "Anxiety or depression"
-            ].map((symptom, index) => (
+            <h3 className="text-2xl font-bold text-[#333333] mb-6 text-center">
+              Symptoms You May Notice
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[
+                "Loss of menstrual periods (3+ months)",
+                "Chronic fatigue and low energy",
+                "Hair loss or thinning",
+                "Cold intolerance (always feeling cold)",
+                "Sleep disturbances and insomnia",
+                "Mood changes, irritability, anxiety",
+                "Loss of libido and sexual interest",
+                "Digestive issues and bloating",
+                "Frequent injuries or slow healing",
+                "Brain fog and difficulty concentrating",
+                "Dry skin and brittle nails",
+                "Constipation and digestive problems"
+              ].map((symptom, index) => (
+                <motion.div
+                  key={index}
+                  variants={fadeInUp}
+                  className="bg-white rounded-lg p-4 shadow-md border border-[#C1A7E1]/20"
+                >
+                  <div className="flex items-start space-x-3">
+                    <div className="w-2 h-2 bg-[#FFB4A2] rounded-full mt-2 flex-shrink-0"></div>
+                    <p className="text-[#333333] font-medium leading-relaxed text-sm">{symptom}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Serious Health Risks */}
+          <motion.div
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={staggerContainer}
+            className="mb-12"
+          >
+            <h3 className="text-2xl font-bold text-[#333333] mb-6 text-center">
+              Serious Health Risks (Often Silent)
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <motion.div
-                key={index}
                 variants={fadeInUp}
-                className="bg-white rounded-lg p-4 shadow-md border border-[#C1A7E1]/20 hover:shadow-lg transition-shadow duration-300"
+                className="bg-white rounded-lg p-6 shadow-lg border border-[#E87C7C]/30 border-l-4 border-l-[#E87C7C]"
               >
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-[#FFB4A2] rounded-full mt-2 flex-shrink-0"></div>
-                  <p className="text-[#333333] font-medium leading-relaxed">{symptom}</p>
-                </div>
+                <h4 className="text-xl font-bold text-[#E87C7C] mb-3">🦴 Bone Health</h4>
+                <p className="text-[#333333] font-medium mb-2">Osteoporosis & Osteopenia</p>
+                <p className="text-[#666666] text-sm leading-relaxed">
+                  Low estrogen levels cause rapid bone loss, increasing fracture risk. This bone loss may be 
+                  irreversible if HA continues long-term. Peak bone mass is typically achieved in your 20s-30s, 
+                  making early intervention crucial.
+                </p>
               </motion.div>
-            ))}
+              
+              <motion.div
+                variants={fadeInUp}
+                className="bg-white rounded-lg p-6 shadow-lg border border-[#E87C7C]/30 border-l-4 border-l-[#E87C7C]"
+              >
+                <h4 className="text-xl font-bold text-[#E87C7C] mb-3">🤰 Fertility</h4>
+                <p className="text-[#333333] font-medium mb-2">Infertility & Pregnancy Complications</p>
+                <p className="text-[#666666] text-sm leading-relaxed">
+                  HA suppresses ovulation, making natural conception difficult or impossible. Even after recovery, 
+                  some may face fertility challenges. Pregnancy during active HA increases risks of complications 
+                  for both mother and baby.
+                </p>
+              </motion.div>
+              
+              <motion.div
+                variants={fadeInUp}
+                className="bg-white rounded-lg p-6 shadow-lg border border-[#E87C7C]/30 border-l-4 border-l-[#E87C7C]"
+              >
+                <h4 className="text-xl font-bold text-[#E87C7C] mb-3">❤️ Cardiovascular</h4>
+                <p className="text-[#333333] font-medium mb-2">Heart Health & Blood Pressure</p>
+                <p className="text-[#666666] text-sm leading-relaxed">
+                  Low estrogen affects cardiovascular health, potentially leading to increased risk of heart disease 
+                  later in life. Some experience low blood pressure, dizziness, and poor circulation.
+                </p>
+              </motion.div>
+              
+              <motion.div
+                variants={fadeInUp}
+                className="bg-white rounded-lg p-6 shadow-lg border border-[#E87C7C]/30 border-l-4 border-l-[#E87C7C]"
+              >
+                <h4 className="text-xl font-bold text-[#E87C7C] mb-3">🧠 Metabolic</h4>
+                <p className="text-[#333333] font-medium mb-2">Hormonal & Metabolic Disruption</p>
+                <p className="text-[#666666] text-sm leading-relaxed">
+                  HA disrupts multiple hormone systems including thyroid, cortisol, and insulin regulation. 
+                  This can lead to metabolic dysfunction that persists even after periods return.
+                </p>
+              </motion.div>
+            </div>
           </motion.div>
           
           <motion.div
@@ -303,12 +379,19 @@ export default function LearnMore() {
             whileInView="animate"
             viewport={{ once: true }}
             variants={fadeInUp}
-            className="mt-12 text-center"
+            className="text-center"
           >
-            <div className="bg-[#C1A7E1]/20 rounded-lg p-6 max-w-3xl mx-auto border border-[#C1A7E1]/30">
-              <p className="text-[#333333] font-medium text-lg">
-                💜 <strong>Remember:</strong> These symptoms are your body's way of communicating. 
-                They're not permanent, and with proper care and support, they can improve as your body heals.
+            <div className="bg-[#E87C7C]/20 rounded-lg p-6 max-w-4xl mx-auto border border-[#E87C7C]/30">
+              <p className="text-[#E87C7C] font-bold text-xl mb-2">
+                ⚠️ Why Early Intervention Matters
+              </p>
+              <p className="text-[#333333] font-medium text-lg mb-4">
+                The longer HA continues, the greater the risk of permanent health consequences.
+              </p>
+              <p className="text-[#666666] leading-relaxed">
+                Many of these risks develop silently - you may feel "fine" while serious damage occurs. 
+                Bone loss, cardiovascular changes, and metabolic disruption can have lasting effects on your health and quality of life. 
+                <strong className="text-[#333333]"> Seeking help early gives you the best chance for complete recovery and prevents irreversible damage.</strong>
               </p>
             </div>
           </motion.div>

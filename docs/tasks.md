@@ -93,9 +93,19 @@ This document details the individual tasks required to develop a functional demo
 * **Task 6.3: Dummy API Endpoint for AI Meal Suggestion (GET)** ✅
     * Create a FastAPI endpoint `/api/ai/meal-suggestion` that returns a hardcoded "recovery-friendly" meal suggestion text.
 
-## 7. Quality Assurance & Polish
+## 7. Learn More Educational Page ✅
 
-* **Task 7.1: Cross-Browser Compatibility:** Test functionality and appearance on major browsers (Chrome, Firefox).
-* **Task 7.2: Basic Responsiveness:** Ensure pages are usable on tablet screen sizes.
-* **Task 7.3: Data Seeding (Frontend Mock):** Prepare a small set of mock data in the frontend for demonstration purposes (e.g., historical BBT, logged meals) to simulate interaction.
-* **Task 7.4: Demo Flow:** Ensure smooth navigation between pages and logical flow for a product demonstration.
+* **Task 7.1: Animated Learn More Page** ✅
+    * Create comprehensive educational page about Hypothalamic Amenorrhea following medical research structure
+    * Implement Framer Motion animations with scroll progress indicator
+    * Include 5 key factors: Eating Habits, Exercise, Weight/Weight Loss, Stress, and Genetics
+    * Add encouraging recovery section with professional resources
+    * Use established color palette and shadcn/ui components
+    * Ensure mobile responsiveness with staggered animations
+
+## 8. Quality Assurance & Polish
+
+* **Task 8.1: Cross-Browser Compatibility:** Test functionality and appearance on major browsers (Chrome, Firefox).
+* **Task 8.2: Basic Responsiveness:** Ensure pages are usable on tablet screen sizes.
+* **Task 8.3: Data Seeding (Frontend Mock):** Prepare a small set of mock data in the frontend for demonstration purposes (e.g., historical BBT, logged meals) to simulate interaction.
+* **Task 8.4: Demo Flow:** Ensure smooth navigation between pages and logical flow for a product demonstration.

@@ -29,7 +29,7 @@ export default function SignupPage() {
         {/* Header with logo and title */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-2">
-            <Leaf className="w-6 h-6 text-teal-500" />
+            <Leaf className="w-6 h-6 text-[#FFB4A2]" />
             <h1 className="text-2xl font-semibold text-gray-800">Create Account</h1>
           </div>
           <p className="text-sm text-gray-500">Join Harmonia to start your journey</p>
@@ -44,7 +44,7 @@ export default function SignupPage() {
               placeholder="Email"
               value={email}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-              className="w-full h-12 px-4 bg-gray-50 border-0 rounded-xl text-gray-700 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-teal-200"
+              className="w-full h-12 px-4 bg-gray-50 border-0 rounded-xl text-gray-700 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-[#FFB4A2]/30"
               required
             />
           </div>
@@ -56,7 +56,7 @@ export default function SignupPage() {
               placeholder="Password"
               value={password}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-              className="w-full h-12 px-4 bg-gray-50 border-0 rounded-xl text-gray-700 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-teal-200"
+              className="w-full h-12 px-4 bg-gray-50 border-0 rounded-xl text-gray-700 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-[#FFB4A2]/30"
               required
             />
           </div>
@@ -68,7 +68,7 @@ export default function SignupPage() {
               placeholder="Confirm Password"
               value={confirmPassword}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
-              className="w-full h-12 px-4 bg-gray-50 border-0 rounded-xl text-gray-700 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-teal-200"
+              className="w-full h-12 px-4 bg-gray-50 border-0 rounded-xl text-gray-700 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-[#FFB4A2]/30"
               required
             />
           </div>
@@ -76,7 +76,7 @@ export default function SignupPage() {
           {/* Signup Button */}
           <Button
             type="submit"
-            className="w-full h-12 bg-teal-500 hover:bg-teal-600 text-white font-medium rounded-xl transition-colors"
+            className="w-full h-12 bg-[#FFB4A2] hover:bg-[#FF9F8A] text-white font-medium rounded-xl transition-colors"
           >
             Create Account
           </Button>
@@ -120,7 +120,7 @@ export default function SignupPage() {
         <div className="text-center mt-6">
           <p className="text-sm text-gray-500">
             Already have an account?{' '}
-            <Link href="/login" className="text-teal-500 hover:text-teal-600 font-medium">
+            <Link href="/login" className="text-[#FFB4A2] hover:text-[#FF9F8A] font-medium">
               Sign In
             </Link>
           </p>

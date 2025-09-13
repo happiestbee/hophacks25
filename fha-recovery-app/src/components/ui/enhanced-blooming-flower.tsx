@@ -9,7 +9,7 @@ interface MealData {
   meal_type: string
   description: string
   timestamp: string
-  nutritionScore?: number
+  calorieCount?: number
 }
 
 interface EnhancedBloomingFlowerProps {
@@ -23,20 +23,20 @@ export function EnhancedBloomingFlower({ loggedMeals, className = "", showBadgeO
   const [dailyFlower, setDailyFlower] = useState<DailyFlower | null>(null)
   const [energyLevel, setEnergyLevel] = useState(0)
 
-  // Calculate flower progress based on logged meals with nutrition scores
+  // Calculate flower progress based on logged meals with calorie counts
   useEffect(() => {
     console.log('Logged meals:', loggedMeals) // Debug log
     
-    // Calculate daily total from individual meal nutrition scores
-    const dailyTotal = loggedMeals.reduce((total, meal) => {
-      return total + (meal.nutritionScore || 0)
+    // Calculate daily total from individual meal calorie counts
+    const dailyCalories = loggedMeals.reduce((total, meal) => {
+      return total + (meal.calorieCount || 0)
     }, 0)
     
-    console.log('Daily nutrition total:', dailyTotal) // Debug log
+    console.log('Daily calorie total:', dailyCalories) // Debug log
     
-    // FHA daily target: 150-200 points (3-4 meals × 40-50 points each)
-    const fhaTarget = 175
-    const progressPercentage = Math.min((dailyTotal / fhaTarget) * 100, 100)
+    // FHA daily target: 2500 calories
+    const calorieTarget = 2500
+    const progressPercentage = Math.min((dailyCalories / calorieTarget) * 100, 100)
     
     console.log('Progress percentage:', progressPercentage) // Debug log
     

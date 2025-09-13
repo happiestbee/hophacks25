@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Heart, Activity, Scale, Brain, Dna, Moon, ChevronDown, ChevronUp, Stethoscope, FileText, Users, Building2, BookOpen, UserCheck, HeartHandshake, Shield, Utensils } from 'lucide-react'
 import { useState } from 'react'
+import ProtectedRoute from '@/components/auth/ProtectedRoute'
 
 export default function LearnMore() {
   const [openFAQ, setOpenFAQ] = useState<number | null>(null)

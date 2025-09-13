@@ -2,50 +2,20 @@
 
 import { useState } from 'react'
 import PageLayout from '@/components/layout/PageLayout'
+import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { FHANutritionCalculator } from '@/lib/nutrition-calculator'
 
-// FHA-specific nutrition scoring function
-const calculateFHANutritionScore = (analysis: any, mealType: string, description: string): number => {
-  // Base score from AI analysis (1-10 scale)
-  const aiScore = analysis?.overall_score || 7
-  
-  // FHA-specific multipliers for higher caloric needs
-  let fhaMultiplier = 1.0
-  
-  // Meal type bonuses (FHA users need consistent energy throughout day)
-  const mealTypeBonus = {
-    'breakfast': 1.2, // Critical for metabolic kickstart
-    'lunch': 1.1,     // Sustaining midday energy
-    'dinner': 1.15,   // Recovery and repair
-    'snack': 0.9      // Supplemental but important
+// Extract calorie count from AI analysis
+const extractCaloriesFromAnalysis = (analysis: any): number => {
+  // Try to extract calories from the analysis response
+  if (analysis?.estimated_calories) {
+    return analysis.estimated_calories
   }
   
-  fhaMultiplier *= mealTypeBonus[mealType as keyof typeof mealTypeBonus] || 1.0
-  
-  // Calorie-dense food bonuses (FHA users need more calories)
-  const calorieBoostWords = ['nuts', 'avocado', 'oil', 'butter', 'cheese', 'eggs', 'salmon', 'beef', 'quinoa', 'oats']
-  const foundCalorieBoosts = calorieBoostWords.filter(word => 
-    description.toLowerCase().includes(word)
-  ).length
-  
-  fhaMultiplier += (foundCalorieBoosts * 0.1) // 10% bonus per calorie-dense food
-  
-  // Protein bonus (critical for FHA recovery)
-  const proteinWords = ['eggs', 'chicken', 'fish', 'beef', 'tofu', 'beans', 'yogurt', 'cheese']
-  const hasProtein = proteinWords.some(word => description.toLowerCase().includes(word))
-  if (hasProtein) fhaMultiplier += 0.15
-  
-  // Healthy fats bonus (essential for hormone production)
-  const fatWords = ['avocado', 'nuts', 'olive oil', 'salmon', 'seeds']
-  const hasFats = fatWords.some(word => description.toLowerCase().includes(word))
-  if (hasFats) fhaMultiplier += 0.15
-  
-  // Calculate final score (scale: 0-50 points for FHA needs)
-  const finalScore = Math.min(50, aiScore * fhaMultiplier * 3.5)
-  
-  return Math.round(finalScore)
+  // If no calories in analysis, return 0 (will be handled gracefully)
+  return 0
 }
 
 import { EnhancedBloomingFlower } from '@/components/ui/enhanced-blooming-flower'
@@ -90,7 +60,7 @@ interface MealData {
   analysis?: any
   isAnalyzing?: boolean
   error?: string
-  nutritionScore?: number
+  calorieCount?: number
 }
 
 export default function NourishThrive() {
@@ -129,7 +99,7 @@ export default function NourishThrive() {
       image: mealData.image,
       timestamp: new Date().toISOString(),
       isAnalyzing: true,
-      nutritionScore: 0 // Initialize with 0, will be updated after analysis
+      calorieCount: 0 // Initialize with 0, will be updated after analysis
     }
 
     // Add meal to logged meals immediately
@@ -157,14 +127,14 @@ export default function NourishThrive() {
       if (response.ok) {
         const analysis = await response.json()
         
-        // Calculate FHA-specific nutrition score from AI analysis
-        const nutritionScore = calculateFHANutritionScore(analysis, mealData.meal_type, mealData.description)
+        // Extract calorie count from AI analysis
+        const calorieCount = extractCaloriesFromAnalysis(analysis)
         
-        // Update meal with full analysis data and nutrition score
+        // Update meal with full analysis data and calorie count
         setLoggedMeals(prev => 
           prev.map(m => 
             m.id === newMeal.id 
-              ? { ...m, analysis: analysis, nutritionScore: nutritionScore, isAnalyzing: false }
+              ? { ...m, analysis: analysis, calorieCount: calorieCount, isAnalyzing: false }
               : m
           )
         )
@@ -253,7 +223,8 @@ export default function NourishThrive() {
   }
 
   return (
-    <PageLayout>
+    <ProtectedRoute>
+      <PageLayout>
       <div className="space-y-6">
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold text-[#333333]">Nourish & Thrive</h1>
@@ -304,15 +275,8 @@ export default function NourishThrive() {
                       onClick={() => handleMealClick(meal)}
                     >
                       <CardContent className="p-4">
-                        <div className="flex items-start space-x-3">
-                          {meal.image && (
-                            <img
-                              src={meal.image}
-                              alt={`${meal.meal_type} meal`}
-                              className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
-                            />
-                          )}
-                          <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1 min-w-0 pr-4">
                             <div className="flex items-center space-x-2 mb-2">
                               <span className="text-lg">{getMealEmoji(meal.meal_type)}</span>
                               <span className="font-medium text-[#333333] capitalize">
@@ -348,6 +312,13 @@ export default function NourishThrive() {
                               {meal.description}
                             </p>
                           </div>
+                          {meal.image && (
+                            <img
+                              src={meal.image}
+                              alt={`${meal.meal_type} meal`}
+                              className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
+                            />
+                          )}
                         </div>
                       </CardContent>
                     </Card>
@@ -379,6 +350,7 @@ export default function NourishThrive() {
         mealTitle={selectedMealForAnalysis?.meal_type ? `${selectedMealForAnalysis.meal_type} meal` : "Your Meal"}
         error={selectedMealForAnalysis?.error}
       />
-    </PageLayout>
+      </PageLayout>
+    </ProtectedRoute>
   )
 }

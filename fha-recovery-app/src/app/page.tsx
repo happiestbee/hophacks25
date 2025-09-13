@@ -81,6 +81,24 @@ export default function Home() {
     }
   }, [isDragging])
 
+  // Global mouse event handlers for continuous dragging
+  const handleGlobalMouseMove = useCallback((e: MouseEvent) => {
+    if (isDragging && sliderRef.current) {
+      const rect = sliderRef.current.getBoundingClientRect()
+      const x = e.clientX - rect.left
+      const percentage = Math.max(0.02, Math.min(0.98, x / rect.width))
+      const hue = Math.round(percentage * 360)
+      setSelectedHue(hue)
+    }
+  }, [isDragging])
+
+  const handleGlobalMouseUp = useCallback(() => {
+    if (isDragging) {
+      setIsDragging(false)
+      setShowQuote(true)
+    }
+  }, [isDragging])
+
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     setIsDragging(true)
     updateHueFromTouch(e)
@@ -105,7 +123,7 @@ export default function Home() {
     
     const rect = sliderRef.current.getBoundingClientRect()
     const x = e.clientX - rect.left
-    const percentage = Math.max(0, Math.min(1, x / rect.width))
+    const percentage = Math.max(0.02, Math.min(0.98, x / rect.width))
     const hue = Math.round(percentage * 360)
     setSelectedHue(hue)
   }
@@ -115,7 +133,7 @@ export default function Home() {
     
     const rect = sliderRef.current.getBoundingClientRect()
     const x = e.touches[0].clientX - rect.left
-    const percentage = Math.max(0, Math.min(1, x / rect.width))
+    const percentage = Math.max(0.02, Math.min(0.98, x / rect.width))
     const hue = Math.round(percentage * 360)
     setSelectedHue(hue)
   }
@@ -134,6 +152,19 @@ export default function Home() {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  // Handle global mouse events for continuous dragging
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleGlobalMouseMove)
+      document.addEventListener('mouseup', handleGlobalMouseUp)
+      
+      return () => {
+        document.removeEventListener('mousemove', handleGlobalMouseMove)
+        document.removeEventListener('mouseup', handleGlobalMouseUp)
+      }
+    }
+  }, [isDragging, handleGlobalMouseMove, handleGlobalMouseUp])
 
 
   return (
@@ -180,7 +211,6 @@ export default function Home() {
                     onMouseDown={handleMouseDown}
                     onMouseMove={handleMouseMove}
                     onMouseUp={handleMouseUp}
-                    onMouseLeave={handleMouseUp}
                     onTouchStart={handleTouchStart}
                     onTouchMove={handleTouchMove}
                     onTouchEnd={handleTouchEnd}

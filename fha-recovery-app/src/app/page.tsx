@@ -266,6 +266,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-    </PageLayout>
+    </div>
   )
 }

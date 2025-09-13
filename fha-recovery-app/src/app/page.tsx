@@ -60,6 +60,7 @@ export default function Home() {
   }
 
   return (
+
     <div className="hero-gradient min-h-screen">
       {/* Navigation */}
       <nav className="border-b border-[#E5E5E5] bg-white/80 backdrop-blur-sm">
@@ -79,6 +80,7 @@ export default function Home() {
           </div>
         </div>
       </nav>
+
 
       {/* Main Content */}
       <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-8">
@@ -264,6 +266,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-    </div>
+    </PageLayout>
   )
 }

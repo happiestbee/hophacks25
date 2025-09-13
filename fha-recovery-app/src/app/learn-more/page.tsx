@@ -3,7 +3,7 @@
 import { motion, useScroll, useSpring } from 'framer-motion'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Heart, Activity, Scale, Brain, Dna, Moon, ChevronDown, ChevronUp, Stethoscope, FileText, Users } from 'lucide-react'
+import { Heart, Activity, Scale, Brain, Dna, Moon, ChevronDown, ChevronUp, Stethoscope, FileText, Users, Building2, BookOpen, UserCheck, HeartHandshake, Shield, Utensils } from 'lucide-react'
 import { useState } from 'react'
 
 export default function LearnMore() {
@@ -134,7 +134,7 @@ export default function LearnMore() {
     {
       name: "Endocrinology Society Guidelines",
       description: "Look for evidence-based clinical practice guidelines on functional hypothalamic amenorrhea from professional endocrinology organizations.",
-      icon: Stethoscope
+      icon: BookOpen
     },
     {
       name: "Obstetrics & Gynecology Resources",
@@ -154,22 +154,22 @@ export default function LearnMore() {
     {
       name: "Medical Centers & Hospitals",
       description: "Trusted medical institutions like Mayo Clinic, Cleveland Clinic, and academic medical centers with HA information.",
-      icon: Stethoscope
+      icon: Building2
     },
     {
       name: "Registered Dietitians",
       description: "Nutrition professionals with specialized training in eating disorders and reproductive health nutrition.",
-      icon: Users
+      icon: Utensils
     },
     {
       name: "Eating Disorder Support Organizations",
       description: "National and local organizations providing helplines, resources, and support for eating disorder-related HA.",
-      icon: Heart
+      icon: HeartHandshake
     },
     {
       name: "Mental Health Professionals",
       description: "Therapists and counselors experienced in body image, eating disorders, perfectionism, and stress management.",
-      icon: Brain
+      icon: UserCheck
     },
     {
       name: "Support Groups & Communities",
@@ -187,7 +187,7 @@ export default function LearnMore() {
         />
 
       {/* Hero Section */}
-      <section className="relative py-20 px-4 bg-gradient-to-br from-[#F7F7F7] to-[#F0F8F7]">
+      <section className="relative pb-20 px-4 bg-gradient-to-br from-[#F7F7F7] to-[#F0F8F7]" style={{paddingTop: '100px'}}>
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -203,49 +203,142 @@ export default function LearnMore() {
             <p className="text-xl text-[#666666] mb-8 max-w-3xl mx-auto leading-relaxed">
             Understanding causes, health risks, and recovery path for everyone affected by HA
             </p>
+            <img 
+              src="/meditation-wellness.png" 
+              alt="Person meditating peacefully at sunset, representing wellness and healing journey"
+              className="w-full h-auto rounded-2xl shadow-lg"
+            />
+          </motion.div>
+          
+          {/* Horizontal divider */}
+          <motion.div
+            initial={{ opacity: 0, scaleX: 0 }}
+            animate={{ opacity: 1, scaleX: 1 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className="mt-16 mb-8"
+          >
+            <div className="max-w-4xl mx-auto px-4">
+              <div className="relative">
+                <hr className="border-0 h-0.5 bg-gradient-to-r from-transparent via-[#87C4BB]/60 to-transparent" />
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                  <div className="w-3 h-3 bg-[#87C4BB] rounded-full shadow-lg"></div>
+                </div>
+              </div>
+            </div>
           </motion.div>
         </div>
       </section>
 
       {/* Basics of HA Section */}
       <section className="py-16 px-4">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
+          {/* Section Title */}
           <motion.div
             initial="initial"
             whileInView="animate"
             viewport={{ once: true, margin: "-100px" }}
             variants={fadeInUp}
-            className="text-center mb-16"
+            className="text-center mb-12"
           >
-            <Card className="border-[#87C4BB]/20 shadow-lg">
+            <h2 className="text-4xl font-bold text-[#333333] mb-4">
+              What is Hypothalamic Amenorrhea?
+            </h2>
+            <p className="text-xl text-[#666666] max-w-3xl mx-auto">
+              Understanding the condition that affects your body's natural rhythms
+            </p>
+          </motion.div>
+
+          {/* Main Definition Card */}
+          <motion.div
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={fadeInUp}
+            className="mb-8"
+          >
+            <Card className="border-[#87C4BB]/20 shadow-lg bg-gradient-to-br from-white to-[#F0F8F7]">
               <CardContent className="p-8">
-                <h2 className="text-3xl font-bold text-[#333333] mb-6">
-                  What is Hypothalamic Amenorrhea?
-                </h2>
-                <div className="space-y-4 text-lg text-[#666666] leading-relaxed">
-                  <p>
-                    Hypothalamic Amenorrhea (HA) occurs when your brain's hypothalamus - the control center 
-                    for hormones - stops sending the signals needed to maintain your menstrual cycle. This 
-                    results in missing periods for three months or more.
-                  </p>
-                  <p>
+                <div className="flex items-start space-x-4">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#87C4BB] to-[#FFB4A2] flex items-center justify-center flex-shrink-0">
+                    <Brain className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-2xl font-bold text-[#333333] mb-4">The Medical Definition</h3>
+                    <p className="text-lg text-[#666666] leading-relaxed">
+                      Hypothalamic Amenorrhea (HA) occurs when your brain's hypothalamus - the control center 
+                      for hormones - stops sending the signals needed to maintain your menstrual cycle. This 
+                      results in missing periods for three months or more.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Who It Affects & Hope Message - Side by Side */}
+          <motion.div
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={staggerContainer}
+            className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8"
+          >
+            {/* Who It Affects */}
+            <motion.div variants={fadeInUp}>
+              <Card className="h-full border-[#FFB4A2]/20 shadow-lg bg-gradient-to-br from-white to-[#FFF8F5]">
+                <CardContent className="p-6">
+                  <div className="flex items-start space-x-3 mb-4">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#FFB4A2] to-[#C1A7E1] flex items-center justify-center flex-shrink-0">
+                      <Users className="w-6 h-6 text-white" />
+                    </div>
+                    <h3 className="text-xl font-bold text-[#333333] leading-tight">Who Does HA Affect?</h3>
+                  </div>
+                  <p className="text-[#666666] leading-relaxed">
                     HA affects people from diverse backgrounds and circumstances - athletes, individuals with eating disorders, 
                     those experiencing chronic stress, people with body dysmorphia, perfectionists, and anyone facing 
                     significant life pressures or energy imbalance.
                   </p>
-                  <div className="bg-[#87C4BB]/10 rounded-lg p-6 border border-[#87C4BB]/20">
-                    <p className="text-[#87C4BB] font-semibold text-xl mb-2">
-                      ✨ The Hope-Filled Truth
-                    </p>
-                    <p className="text-[#333333] font-medium">
-                      HA is reversible in most cases. With the right approach, understanding, and support, 
-                      your body can restore its natural hormonal balance and menstrual cycle.
-                    </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Hope Message */}
+            <motion.div variants={fadeInUp}>
+              <Card className="h-full border-[#87C4BB]/30 shadow-lg bg-gradient-to-br from-[#87C4BB]/5 to-[#87C4BB]/10">
+                <CardContent className="p-6">
+                  <div className="flex items-start space-x-3 mb-4">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#87C4BB] to-[#A8D5BA] flex items-center justify-center flex-shrink-0">
+                      <Heart className="w-6 h-6 text-white" />
+                    </div>
+                    <h3 className="text-xl font-bold text-[#87C4BB] leading-tight">✨ The Hope-Filled Truth</h3>
                   </div>
-                  <p>
+                  <p className="text-[#333333] font-medium leading-relaxed">
+                    HA is reversible in most cases. With the right approach, understanding, and support, 
+                    your body can restore its natural hormonal balance and menstrual cycle.
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </motion.div>
+
+          {/* Understanding & Compassion Message */}
+          <motion.div
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={fadeInUp}
+          >
+            <Card className="border-[#C1A7E1]/20 shadow-lg bg-gradient-to-r from-[#C1A7E1]/5 via-white to-[#FFB4A2]/5">
+              <CardContent className="p-8 text-center">
+                <div className="max-w-4xl mx-auto">
+                  <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-br from-[#C1A7E1] to-[#FFB4A2] flex items-center justify-center">
+                    <HeartHandshake className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-[#333333] mb-4">A Message of Understanding</h3>
+                  <p className="text-lg text-[#666666] leading-relaxed">
                     Understanding HA starts with recognizing that it's your body's protective response to stress, 
-                    inadequate nourishment, or overwhelming demands - not a personal failure, but a signal that 
-                    deserves attention, compassion, and care.
+                    inadequate nourishment, or overwhelming demands - <span className="font-semibold text-[#333333]">not a personal failure</span>, 
+                    but a signal that deserves attention, compassion, and care.
                   </p>
                 </div>
               </CardContent>
@@ -333,7 +426,7 @@ export default function LearnMore() {
                       <CardTitle className="text-xl font-bold text-[#333333]">
                         {actualIndex + 1}. {factor.title}
                       </CardTitle>
-                    </CardHeader>
+          </CardHeader>
                     <CardContent className="flex-1 flex flex-col">
                       <p className="text-[#666666] leading-relaxed mb-4 flex-1">
                         {factor.description}
@@ -522,7 +615,7 @@ export default function LearnMore() {
                     </div>
                     <div className="bg-[#87C4BB]/10 rounded-lg p-6 text-left">
                       <h3 className="font-bold text-[#333333] mb-3 text-xl">📚 Education & Support</h3>
-                      <p className="text-[#666666]">
+            <p className="text-[#666666]">
                         Access research-based information and connect with a community that understands. 
                         Knowledge and connection are powerful tools in your recovery toolkit.
                       </p>
@@ -687,9 +780,9 @@ export default function LearnMore() {
                       </div>
                       <p className="text-[#666666] leading-relaxed text-sm mt-auto">
                         {resource.description}
-                      </p>
-                    </CardContent>
-                  </Card>
+            </p>
+          </CardContent>
+        </Card>
                 </motion.div>
               )
             })}
@@ -715,6 +808,6 @@ export default function LearnMore() {
         </div>
       </section>
 
-    </div>
+      </div>
   )
 }

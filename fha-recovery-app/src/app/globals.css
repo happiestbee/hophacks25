@@ -133,14 +133,113 @@
 
 /* Custom styles for the FHA recovery app */
 .hero-gradient {
-  background: linear-gradient(135deg, #f7f7f7 0%, #f0f8f7 100%);
+  background: linear-gradient(135deg, #F7F7F7 0%, #F0F8F7 100%);
+  min-height: 100vh;
 }
 
 .card-hover {
-  transition: all 0.2s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
 .card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* FHA Recovery App Color Palette */
+:root {
+  --fha-primary-bg: #F7F7F7;
+  --fha-primary-accent: #87C4BB;
+  --fha-secondary-accent: #FFB4A2;
+  --fha-tertiary-accent: #C1A7E1;
+  --fha-text-primary: #333333;
+  --fha-text-secondary: #666666;
+  --fha-error: #E87C7C;
+  --fha-border: #E5E5E5;
+}
+
+/* Typography improvements for FHA app */
+.fha-heading {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--fha-text-primary);
+}
+
+.fha-body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--fha-text-secondary);
+}
+
+/* Gentle animations for healing-focused design */
+@keyframes gentle-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.gentle-animate {
+  animation: gentle-fade-in 0.6s ease-out;
+}
+
+/* Focus states for accessibility */
+.focus-gentle:focus {
+  outline: 2px solid var(--fha-primary-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Mood button styles */
+.mood-button {
+  transition: all 0.3s ease-in-out;
+}
+
+.mood-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.mood-button:active {
+  transform: translateY(0);
+}
+
+/* Custom input focus styles */
+input:focus {
+  box-shadow: 0 0 0 3px rgba(135, 196, 187, 0.1);
+}
+
+/* AI Message animations */
+@keyframes ai-message-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.ai-message-enter {
+  animation: ai-message-fade-in 0.6s ease-out;
+}
+
+/* Gentle pulse for AI avatar */
+@keyframes gentle-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.ai-avatar {
+  animation: gentle-pulse 2s ease-in-out infinite;
 }

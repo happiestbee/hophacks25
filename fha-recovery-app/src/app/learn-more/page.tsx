@@ -94,7 +94,7 @@ export default function LearnMore() {
         </div>
       </section>
 
-      {/* Introduction Section */}
+      {/* Basics of HA Section */}
       <section className="py-16 px-4">
         <div className="max-w-4xl mx-auto">
           <motion.div
@@ -107,19 +107,30 @@ export default function LearnMore() {
             <Card className="border-[#87C4BB]/20 shadow-lg">
               <CardContent className="p-8">
                 <h2 className="text-3xl font-bold text-[#333333] mb-6">
-                  Understanding Hypothalamic Amenorrhea
+                  What is Hypothalamic Amenorrhea?
                 </h2>
                 <div className="space-y-4 text-lg text-[#666666] leading-relaxed">
                   <p>
-                    Hypothalamic Amenorrhea occurs when hormonal signals from the hypothalamus - 
-                    your brain's control center - are disrupted or shut off, causing menstrual periods to stop.
-                  </p>
-                  <p className="text-[#87C4BB] font-semibold">
-                    The encouraging news: HA is reversible in most cases.
+                    Hypothalamic Amenorrhea (HA) occurs when your brain's hypothalamus - the control center 
+                    for hormones - stops sending the signals needed to maintain your menstrual cycle. This 
+                    results in missing periods for three months or more.
                   </p>
                   <p>
-                    Research has identified five key factors that contribute to HA: eating habits, 
-                    exercise patterns, weight changes, stress levels, and genetic predisposition.
+                    HA is a component of the female athlete triad and relative energy deficiency in sport (RED-S), 
+                    affecting not just athletes but anyone experiencing energy imbalance.
+                  </p>
+                  <div className="bg-[#87C4BB]/10 rounded-lg p-6 border border-[#87C4BB]/20">
+                    <p className="text-[#87C4BB] font-semibold text-xl mb-2">
+                      ✨ The Hope-Filled Truth
+                    </p>
+                    <p className="text-[#333333] font-medium">
+                      HA is reversible in most cases. With the right approach, understanding, and support, 
+                      your body can restore its natural hormonal balance and menstrual cycle.
+                    </p>
+                  </div>
+                  <p>
+                    Understanding HA starts with recognizing that it's your body's protective response - 
+                    not a failure, but a signal that needs attention and care.
                   </p>
                 </div>
               </CardContent>
@@ -184,8 +195,78 @@ export default function LearnMore() {
         </div>
       </section>
 
-      {/* Recovery Section */}
-      <section className="py-16 px-4 bg-gradient-to-br from-[#FFB4A2]/20 to-[#C1A7E1]/20">
+      {/* Symptoms Section */}
+      <section className="py-16 px-4 bg-gradient-to-br from-[#C1A7E1]/10 to-[#FFB4A2]/10">
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true }}
+            variants={fadeInUp}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl font-bold text-[#333333] mb-6">
+              Recognizing the Symptoms
+            </h2>
+            <p className="text-xl text-[#666666] max-w-3xl mx-auto leading-relaxed">
+              HA affects more than just your menstrual cycle. Understanding these symptoms can help you 
+              recognize when your body needs support and care.
+            </p>
+          </motion.div>
+          
+          <motion.div
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={staggerContainer}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {[
+              "Loss of menstrual periods (3+ months)",
+              "Chronic fatigue and low energy",
+              "Hair loss or thinning",
+              "Decreased bone density",
+              "Cold intolerance",
+              "Sleep disturbances",
+              "Mood changes and irritability",
+              "Loss of libido",
+              "Digestive issues",
+              "Frequent injuries or slow healing",
+              "Brain fog and difficulty concentrating",
+              "Anxiety or depression"
+            ].map((symptom, index) => (
+              <motion.div
+                key={index}
+                variants={fadeInUp}
+                className="bg-white rounded-lg p-4 shadow-md border border-[#C1A7E1]/20 hover:shadow-lg transition-shadow duration-300"
+              >
+                <div className="flex items-start space-x-3">
+                  <div className="w-2 h-2 bg-[#FFB4A2] rounded-full mt-2 flex-shrink-0"></div>
+                  <p className="text-[#333333] font-medium leading-relaxed">{symptom}</p>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+          
+          <motion.div
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true }}
+            variants={fadeInUp}
+            className="mt-12 text-center"
+          >
+            <div className="bg-[#C1A7E1]/20 rounded-lg p-6 max-w-3xl mx-auto border border-[#C1A7E1]/30">
+              <p className="text-[#333333] font-medium text-lg">
+                💜 <strong>Remember:</strong> These symptoms are your body's way of communicating. 
+                They're not permanent, and with proper care and support, they can improve as your body heals.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* How Our Product Helps Section */}
+      <section className="py-16 px-4 bg-gradient-to-br from-[#87C4BB]/20 to-[#FFB4A2]/20">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial="initial"
@@ -193,29 +274,58 @@ export default function LearnMore() {
             viewport={{ once: true }}
             variants={fadeInUp}
           >
-            <Card className="border-[#FFB4A2]/30 shadow-xl">
+            <Card className="border-[#87C4BB]/30 shadow-xl">
               <CardContent className="p-10">
                 <h2 className="text-4xl font-bold text-[#333333] mb-8">
-                  The Path to Recovery
+                  How Harmonia Supports Your Recovery
                 </h2>
                 <div className="space-y-6 text-lg">
                   <p className="text-[#666666] leading-relaxed">
                     <span className="font-semibold text-[#333333]">
-                      A combination of these five factors is usually the culprit in causing HA.
-                    </span> However, understanding this is the first step toward healing.
+                      Understanding HA is just the beginning.
+                    </span> Harmonia provides the tools and support you need to navigate your recovery journey with confidence and compassion.
                   </p>
-                  <div className="bg-[#FFB4A2]/20 rounded-lg p-6 border border-[#FFB4A2]/30">
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+                    <div className="bg-[#87C4BB]/10 rounded-lg p-6 text-left">
+                      <h3 className="font-bold text-[#333333] mb-3 text-xl">🌡️ Gentle Tracking</h3>
+                      <p className="text-[#666666]">
+                        Monitor your basal body temperature and symptoms without obsession. 
+                        Our BBT tracker helps you understand your body's patterns while maintaining a healthy relationship with data.
+                      </p>
+                    </div>
+                    <div className="bg-[#FFB4A2]/10 rounded-lg p-6 text-left">
+                      <h3 className="font-bold text-[#333333] mb-3 text-xl">🍽️ Nourishment Focus</h3>
+                      <p className="text-[#666666]">
+                        Our Nourish & Thrive feature helps you rebuild a positive relationship with food, 
+                        providing meal inspiration and gentle guidance without restriction or judgment.
+                      </p>
+                    </div>
+                    <div className="bg-[#C1A7E1]/10 rounded-lg p-6 text-left">
+                      <h3 className="font-bold text-[#333333] mb-3 text-xl">💜 Self-Love Space</h3>
+                      <p className="text-[#666666]">
+                        Cultivate self-compassion with daily affirmations and reflection tools. 
+                        Your healing journey deserves kindness, and we provide the space for that growth.
+                      </p>
+                    </div>
+                    <div className="bg-[#87C4BB]/10 rounded-lg p-6 text-left">
+                      <h3 className="font-bold text-[#333333] mb-3 text-xl">📚 Education & Support</h3>
+                      <p className="text-[#666666]">
+                        Access research-based information and connect with a community that understands. 
+                        Knowledge and connection are powerful tools in your recovery toolkit.
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-[#87C4BB]/20 rounded-lg p-6 border border-[#87C4BB]/30">
                     <p className="text-[#333333] font-bold text-xl mb-4">
-                      🌟 Once recognized, mindset and habits can be changed to overcome these signals
+                      🌟 Recovery is possible, and you don't have to do it alone
                     </p>
-                    <p className="text-[#FFB4A2] font-bold text-2xl">
-                      Periods can be restored
+                    <p className="text-[#666666] mb-4">
+                      Harmonia combines evidence-based tracking with compassionate support, 
+                      creating a safe space where healing can happen naturally.
                     </p>
                   </div>
-                  <p className="text-[#666666]">
-                    Recovery is a journey that requires patience, self-compassion, and often professional support. 
-                    Every small step toward healing matters.
-                  </p>
                 </div>
               </CardContent>
             </Card>

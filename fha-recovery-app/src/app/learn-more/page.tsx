@@ -3,9 +3,12 @@
 import { motion, useScroll, useSpring } from 'framer-motion'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Heart, Activity, Scale, Brain, Dna } from 'lucide-react'
+import { Heart, Activity, Scale, Brain, Dna, ChevronDown, ChevronUp } from 'lucide-react'
+import { useState } from 'react'
 
 export default function LearnMore() {
+  const [openFAQ, setOpenFAQ] = useState<number | null>(null)
+  
   const { scrollYProgress } = useScroll()
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
@@ -59,6 +62,53 @@ export default function LearnMore() {
       encouragement: "Understanding genetic factors helps us approach recovery with patience and personalized care."
     }
   ]
+
+  const faqData = [
+    {
+      question: "How long does it take to recover from HA?",
+      answer: "Recovery timeline varies greatly between individuals. Some women see their periods return within 3-6 months, while others may take 12-18 months or longer. Factors affecting recovery time include how long you've had HA, the severity of underlying causes, and how consistently you address the contributing factors. Remember, recovery isn't just about getting your period back - it's about restoring overall hormonal and metabolic health."
+    },
+    {
+      question: "Do I really need to gain weight to recover?",
+      answer: "Not everyone with HA needs to gain weight, but many do. About 67% of women with HA have a BMI over 18.5, but 82% experienced significant weight loss before developing HA. Your body may need to return to its natural set point weight to restore hormonal function. A registered dietitian experienced with HA can help determine if weight restoration is necessary for your individual recovery."
+    },
+    {
+      question: "Can I still exercise during HA recovery?",
+      answer: "Exercise modification is often necessary during recovery. High-intensity or excessive exercise can suppress reproductive hormones. Many healthcare providers recommend reducing exercise intensity and duration, or taking a complete break from structured exercise. Gentle movement like walking, restorative yoga, or light stretching may be appropriate. The key is listening to your body and working with your healthcare team."
+    },
+    {
+      question: "Will my periods return to normal after recovery?",
+      answer: "Most women who recover from HA do see their periods return and can have normal menstrual cycles. However, it may take time for cycles to become regular and ovulatory. Some women may experience irregular cycles initially as their hormones rebalance. Long-term, most women with recovered HA can conceive and have healthy pregnancies, though it's important to maintain the lifestyle changes that supported recovery."
+    },
+    {
+      question: "What should I eat during HA recovery?",
+      answer: "Focus on adequate calories, regular meals, and including all food groups. Many women with HA have been under-eating, so increasing overall intake is often necessary. Include healthy fats (crucial for hormone production), complex carbohydrates, and adequate protein. Avoid restrictive diets or 'clean eating' rules. A registered dietitian can help create a personalized meal plan that supports your recovery goals."
+    },
+    {
+      question: "Can stress alone cause HA?",
+      answer: "While stress is a significant factor, HA is typically caused by a combination of factors including inadequate nutrition, excessive exercise, weight loss, stress, and sometimes genetic predisposition. Chronic stress can disrupt the hypothalamic-pituitary-ovarian axis, but it usually works alongside other factors. Managing stress through therapy, mindfulness, or lifestyle changes is an important part of recovery."
+    },
+    {
+      question: "Is HA the same as PCOS?",
+      answer: "No, HA and PCOS are different conditions with opposite underlying mechanisms. HA involves suppressed reproductive hormones due to energy deficiency or stress, while PCOS typically involves elevated androgens and insulin resistance. However, some women may have been misdiagnosed with PCOS when they actually have HA, especially if they have irregular periods and are athletic or have a history of restrictive eating."
+    },
+    {
+      question: "Do I need hormone therapy for HA?",
+      answer: "Hormone therapy (like birth control pills) may be prescribed to protect bone health if natural periods don't return within a reasonable timeframe. However, hormonal contraception doesn't treat the underlying causes of HA and may mask whether recovery efforts are working. Many healthcare providers prefer to address root causes first and use hormone therapy as a protective measure if needed. Always discuss options with your healthcare provider."
+    },
+    {
+      question: "Can I get pregnant with HA?",
+      answer: "HA typically means you're not ovulating regularly, making natural conception difficult. However, fertility often returns with recovery. Some women may ovulate and conceive before their periods return, so it's important to discuss contraception with your healthcare provider if pregnancy isn't desired. If you're trying to conceive, focus on recovery first, as this gives you the best chance of a healthy pregnancy."
+    },
+    {
+      question: "What tests will my doctor run for HA?",
+      answer: "Diagnosis typically involves blood tests to check hormone levels (FSH, LH, estrogen, prolactin, thyroid hormones), rule out other conditions, and assess overall health. Your doctor may also check vitamin D, bone density (DEXA scan), and other nutrients. A detailed history about your eating, exercise, stress levels, and menstrual history is equally important. HA is often a diagnosis of exclusion, meaning other causes of amenorrhea are ruled out first."
+    }
+  ]
+
+  const toggleFAQ = (index: number) => {
+    setOpenFAQ(openFAQ === index ? null : index)
+  }
 
   return (
     <div className="min-h-screen bg-[#F7F7F7]">
@@ -329,6 +379,101 @@ export default function LearnMore() {
                 </div>
               </CardContent>
             </Card>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-16 px-4 bg-gradient-to-br from-[#87C4BB]/10 to-[#C1A7E1]/10">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true }}
+            variants={fadeInUp}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl font-bold text-[#333333] mb-6">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-xl text-[#666666] max-w-3xl mx-auto leading-relaxed">
+              Get answers to the most common questions about Hypothalamic Amenorrhea, 
+              recovery, and what to expect on your healing journey.
+            </p>
+          </motion.div>
+          
+          <motion.div
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={staggerContainer}
+            className="space-y-4"
+          >
+            {faqData.map((faq, index) => (
+              <motion.div
+                key={index}
+                variants={fadeInUp}
+                className="bg-white rounded-lg shadow-md border border-[#87C4BB]/20 overflow-hidden"
+              >
+                <button
+                  onClick={() => toggleFAQ(index)}
+                  className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-[#87C4BB]/5 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#87C4BB]/20"
+                >
+                  <h3 className="text-lg font-semibold text-[#333333] pr-4">
+                    {faq.question}
+                  </h3>
+                  <div className="flex-shrink-0">
+                    {openFAQ === index ? (
+                      <ChevronUp className="w-5 h-5 text-[#87C4BB]" />
+                    ) : (
+                      <ChevronDown className="w-5 h-5 text-[#87C4BB]" />
+                    )}
+                  </div>
+                </button>
+                
+                <motion.div
+                  initial={false}
+                  animate={{
+                    height: openFAQ === index ? "auto" : 0,
+                    opacity: openFAQ === index ? 1 : 0
+                  }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="overflow-hidden"
+                >
+                  <div className="px-6 pb-4 pt-2">
+                    <div className="border-t border-[#87C4BB]/20 pt-4">
+                      <p className="text-[#666666] leading-relaxed">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            ))}
+          </motion.div>
+          
+          <motion.div
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true }}
+            variants={fadeInUp}
+            className="mt-12 text-center"
+          >
+            <div className="bg-[#FFB4A2]/20 rounded-lg p-6 max-w-3xl mx-auto border border-[#FFB4A2]/30">
+              <p className="text-[#333333] font-medium text-lg mb-4">
+                🤔 <strong>Have more questions?</strong>
+              </p>
+              <p className="text-[#666666] mb-4">
+                Remember that every HA journey is unique. These answers provide general guidance, 
+                but it's important to work with healthcare providers who understand HA for personalized advice.
+              </p>
+              <Button 
+                className="bg-[#FFB4A2] hover:bg-[#FFB4A2]/90 text-white px-6 py-2 rounded-full"
+                onClick={() => window.location.href = '/bbt-tracker'}
+              >
+                Start Tracking Your Journey
+              </Button>
+            </div>
           </motion.div>
         </div>
       </section>

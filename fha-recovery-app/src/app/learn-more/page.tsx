@@ -3,7 +3,7 @@
 import { motion, useScroll, useSpring } from 'framer-motion'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Heart, Activity, Scale, Brain, Dna, ChevronDown, ChevronUp } from 'lucide-react'
+import { Heart, Activity, Scale, Brain, Dna, Moon, ChevronDown, ChevronUp, Stethoscope, FileText, Users } from 'lucide-react'
 import { useState } from 'react'
 
 export default function LearnMore() {
@@ -22,10 +22,24 @@ export default function LearnMore() {
     transition: { duration: 0.6, ease: "easeOut" }
   }
 
+  const fadeInUpFast = {
+    initial: { opacity: 0, y: 30 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.3, ease: "easeOut" }
+  }
+
   const staggerContainer = {
     animate: {
       transition: {
         staggerChildren: 0.2
+      }
+    }
+  }
+
+  const staggerContainerFast = {
+    animate: {
+      transition: {
+        staggerChildren: 0.05
       }
     }
   }
@@ -60,6 +74,12 @@ export default function LearnMore() {
       title: "Individual Factors",
       description: "Genetics, personality traits (like perfectionism), sensitivity to stress, metabolic factors, and individual hormone sensitivity all influence HA risk. Some people may be more susceptible than others.",
       encouragement: "Understanding your unique factors helps create a personalized, compassionate approach to recovery."
+    },
+    {
+      icon: Moon,
+      title: "Sleep & Circadian Health",
+      description: "Poor sleep quality, irregular sleep schedules, chronic sleep deprivation, or disrupted circadian rhythms can significantly impact hormonal regulation. Sleep disruption affects cortisol patterns, melatonin production, and reproductive hormone pulsatility.",
+      encouragement: "Prioritizing quality sleep and healthy sleep patterns supports your body's natural healing and hormone regulation."
     }
   ]
 
@@ -110,16 +130,64 @@ export default function LearnMore() {
     setOpenFAQ(openFAQ === index ? null : index)
   }
 
+  const resources = [
+    {
+      name: "Endocrinology Society Guidelines",
+      description: "Look for evidence-based clinical practice guidelines on functional hypothalamic amenorrhea from professional endocrinology organizations.",
+      icon: Stethoscope
+    },
+    {
+      name: "Obstetrics & Gynecology Resources",
+      description: "Patient education materials from reputable OB/GYN organizations about amenorrhea causes and treatment options.",
+      icon: FileText
+    },
+    {
+      name: "Reproductive Endocrinologists",
+      description: "Specialists who focus on hormone-related reproductive health issues and can provide expert diagnosis and treatment.",
+      icon: Brain
+    },
+    {
+      name: "Women's Health Organizations",
+      description: "Government and non-profit women's health resources that provide accessible information about menstrual health.",
+      icon: Heart
+    },
+    {
+      name: "Medical Centers & Hospitals",
+      description: "Trusted medical institutions like Mayo Clinic, Cleveland Clinic, and academic medical centers with HA information.",
+      icon: Stethoscope
+    },
+    {
+      name: "Registered Dietitians",
+      description: "Nutrition professionals with specialized training in eating disorders and reproductive health nutrition.",
+      icon: Users
+    },
+    {
+      name: "Eating Disorder Support Organizations",
+      description: "National and local organizations providing helplines, resources, and support for eating disorder-related HA.",
+      icon: Heart
+    },
+    {
+      name: "Mental Health Professionals",
+      description: "Therapists and counselors experienced in body image, eating disorders, perfectionism, and stress management.",
+      icon: Brain
+    },
+    {
+      name: "Support Groups & Communities",
+      description: "Online and in-person support groups for individuals experiencing HA and related recovery challenges.",
+      icon: Users
+    }
+  ]
+
   return (
     <div className="min-h-screen bg-[#F7F7F7]">
-      {/* Progress Bar */}
-      <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-[#87C4BB] origin-left z-50"
-        style={{ scaleX }}
-      />
+        {/* Progress Bar */}
+        <motion.div
+          className="fixed top-0 left-0 right-0 h-1 bg-[#87C4BB] origin-left z-50"
+          style={{ scaleX }}
+        />
 
       {/* Hero Section */}
-      <section className="relative py-20 px-4 bg-gradient-to-br from-[#87C4BB]/20 to-[#C1A7E1]/20">
+      <section className="relative py-20 px-4 bg-gradient-to-br from-[#F7F7F7] to-[#F0F8F7]">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -133,17 +201,8 @@ export default function LearnMore() {
               </span>
             </h1>
             <p className="text-xl text-[#666666] mb-8 max-w-3xl mx-auto leading-relaxed">
-              Understanding the causes, health risks, and path to recovery for everyone affected by HA
+            Understanding causes, health risks, and recovery path for everyone affected by HA
             </p>
-            <div className="bg-white/80 rounded-lg p-6 max-w-3xl mx-auto border border-[#87C4BB]/20">
-              <p className="text-[#333333] font-medium mb-2">
-                HA affects people from all walks of life - not just athletes
-              </p>
-              <p className="text-[#666666] text-sm">
-                Whether related to eating disorders, high stress, perfectionism, body image concerns, or energy imbalance, 
-                HA is a serious condition that requires understanding and compassionate care.
-              </p>
-            </div>
           </motion.div>
         </div>
       </section>
@@ -195,7 +254,7 @@ export default function LearnMore() {
         </div>
       </section>
 
-      {/* The 5 Factors Section */}
+      {/* The 6 Factors Section */}
       <section className="py-16 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
           <motion.h2
@@ -205,26 +264,26 @@ export default function LearnMore() {
             variants={fadeInUp}
             className="text-4xl font-bold text-center text-[#333333] mb-16"
           >
-            The 5 Key Factors of HA
+            The 6 Key Factors of HA
           </motion.h2>
           
+          {/* First row - 3 factors */}
           <motion.div
             initial="initial"
             whileInView="animate"
             viewport={{ once: true, margin: "-50px" }}
             variants={staggerContainer}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8"
           >
-            {factors.map((factor, index) => {
+            {factors.slice(0, 3).map((factor, index) => {
               const Icon = factor.icon
               return (
                 <motion.div
                   key={index}
                   variants={fadeInUp}
                   whileHover={{ y: -5, transition: { duration: 0.2 } }}
-                  className={index === 2 ? "lg:col-span-1 lg:col-start-2" : ""}
                 >
-                  <Card className="h-full border-[#87C4BB]/20 shadow-lg hover:shadow-xl transition-all duration-300">
+                  <Card className="h-full border-[#87C4BB]/20 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col">
                     <CardHeader className="text-center pb-4">
                       <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-[#87C4BB] to-[#FFB4A2] flex items-center justify-center">
                         <Icon className="w-8 h-8 text-white" />
@@ -233,11 +292,53 @@ export default function LearnMore() {
                         {index + 1}. {factor.title}
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                      <p className="text-[#666666] leading-relaxed">
+                    <CardContent className="flex-1 flex flex-col">
+                      <p className="text-[#666666] leading-relaxed mb-4 flex-1">
                         {factor.description}
                       </p>
-                      <div className="bg-[#87C4BB]/10 rounded-lg p-4 border-l-4 border-[#87C4BB]">
+                      <div className="bg-[#87C4BB]/10 rounded-lg p-4 border-l-4 border-[#87C4BB] mt-auto">
+                        <p className="text-[#333333] font-medium text-sm">
+                          💚 {factor.encouragement}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )
+            })}
+          </motion.div>
+
+          {/* Second row - 3 factors */}
+          <motion.div
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={staggerContainer}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
+            {factors.slice(3, 6).map((factor, index) => {
+              const Icon = factor.icon
+              const actualIndex = index + 3
+              return (
+                <motion.div
+                  key={actualIndex}
+                  variants={fadeInUp}
+                  whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                >
+                  <Card className="h-full border-[#87C4BB]/20 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col">
+                    <CardHeader className="text-center pb-4">
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-[#87C4BB] to-[#FFB4A2] flex items-center justify-center">
+                        <Icon className="w-8 h-8 text-white" />
+                      </div>
+                      <CardTitle className="text-xl font-bold text-[#333333]">
+                        {actualIndex + 1}. {factor.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-1 flex flex-col">
+                      <p className="text-[#666666] leading-relaxed mb-4 flex-1">
+                        {factor.description}
+                      </p>
+                      <div className="bg-[#87C4BB]/10 rounded-lg p-4 border-l-4 border-[#87C4BB] mt-auto">
                         <p className="text-[#333333] font-medium text-sm">
                           💚 {factor.encouragement}
                         </p>
@@ -252,7 +353,7 @@ export default function LearnMore() {
       </section>
 
       {/* Health Risks & Symptoms Section */}
-      <section className="py-16 px-4 bg-gradient-to-br from-[#C1A7E1]/10 to-[#FFB4A2]/10">
+      <section className="py-16 px-4">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial="initial"
@@ -275,7 +376,7 @@ export default function LearnMore() {
             initial="initial"
             whileInView="animate"
             viewport={{ once: true, margin: "-50px" }}
-            variants={staggerContainer}
+            variants={staggerContainerFast}
             className="mb-12"
           >
             <h3 className="text-2xl font-bold text-[#333333] mb-6 text-center">
@@ -298,7 +399,7 @@ export default function LearnMore() {
               ].map((symptom, index) => (
                 <motion.div
                   key={index}
-                  variants={fadeInUp}
+                  variants={fadeInUpFast}
                   className="bg-white rounded-lg p-4 shadow-md border border-[#C1A7E1]/20"
                 >
                   <div className="flex items-start space-x-3">
@@ -319,7 +420,7 @@ export default function LearnMore() {
             className="mb-12"
           >
             <h3 className="text-2xl font-bold text-[#333333] mb-6 text-center">
-              Serious Health Risks (Often Silent)
+              Serious Health Risks
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <motion.div
@@ -373,33 +474,11 @@ export default function LearnMore() {
               </motion.div>
             </div>
           </motion.div>
-          
-          <motion.div
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-            variants={fadeInUp}
-            className="text-center"
-          >
-            <div className="bg-[#E87C7C]/20 rounded-lg p-6 max-w-4xl mx-auto border border-[#E87C7C]/30">
-              <p className="text-[#E87C7C] font-bold text-xl mb-2">
-                ⚠️ Why Early Intervention Matters
-              </p>
-              <p className="text-[#333333] font-medium text-lg mb-4">
-                The longer HA continues, the greater the risk of permanent health consequences.
-              </p>
-              <p className="text-[#666666] leading-relaxed">
-                Many of these risks develop silently - you may feel "fine" while serious damage occurs. 
-                Bone loss, cardiovascular changes, and metabolic disruption can have lasting effects on your health and quality of life. 
-                <strong className="text-[#333333]"> Seeking help early gives you the best chance for complete recovery and prevents irreversible damage.</strong>
-              </p>
-            </div>
-          </motion.div>
         </div>
       </section>
 
       {/* How Our Product Helps Section */}
-      <section className="py-16 px-4 bg-gradient-to-br from-[#87C4BB]/20 to-[#FFB4A2]/20">
+      <section className="py-16 px-4 bg-gradient-to-br from-[#F7F7F7] to-[#F0F8F7]">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial="initial"
@@ -467,7 +546,7 @@ export default function LearnMore() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-16 px-4 bg-gradient-to-br from-[#87C4BB]/10 to-[#C1A7E1]/10">
+      <section className="py-16 px-4 bg-white">
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial="initial"
@@ -562,60 +641,80 @@ export default function LearnMore() {
       </section>
 
       {/* Resources Section */}
-      <section className="py-16 px-4">
-        <div className="max-w-4xl mx-auto">
+      <section className="py-20 px-4 bg-gradient-to-br from-[#F8F6FF] to-[#F0F8F7]">
+        <div className="max-w-6xl mx-auto">
           <motion.div
             initial="initial"
             whileInView="animate"
             viewport={{ once: true }}
             variants={fadeInUp}
-            className="text-center"
+            className="text-center mb-12"
           >
-            <h2 className="text-3xl font-bold text-[#333333] mb-8">
-              Professional Support & Resources
+            <h2 className="text-4xl font-bold text-[#333333] mb-4">
+              Helpful Resources & Support
             </h2>
-            <Card className="border-[#C1A7E1]/20 shadow-lg">
-              <CardContent className="p-8">
-                <div className="space-y-6">
-                  <p className="text-[#666666] text-lg leading-relaxed">
-                    Recovery from HA often benefits from a multidisciplinary approach involving 
-                    healthcare professionals who understand the complexities of this condition.
-                  </p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
-                    <div className="bg-[#C1A7E1]/10 rounded-lg p-4">
-                      <h3 className="font-semibold text-[#333333] mb-2">Healthcare Team</h3>
-                      <ul className="text-[#666666] text-sm space-y-1">
-                        <li>• Reproductive endocrinologist</li>
-                        <li>• Registered dietitian</li>
-                        <li>• Mental health counselor</li>
-                        <li>• Primary care physician</li>
-                      </ul>
-                    </div>
-                    <div className="bg-[#87C4BB]/10 rounded-lg p-4">
-                      <h3 className="font-semibold text-[#333333] mb-2">Additional Resources</h3>
-                      <ul className="text-[#666666] text-sm space-y-1">
-                        <li>• Support groups</li>
-                        <li>• Educational materials</li>
-                        <li>• Recovery-focused apps</li>
-                        <li>• Online communities</li>
-                      </ul>
-                    </div>
-                  </div>
-                  <Button 
-                    className="bg-[#87C4BB] hover:bg-[#87C4BB]/90 text-white px-8 py-3 text-lg rounded-full"
-                    onClick={() => window.location.href = '/bbt-tracker'}
-                  >
-                    Start Your Tracking Journey
-                  </Button>
-                  <p className="text-sm text-[#666666] mt-4">
-                    Remember: You deserve support, healing, and hope. Recovery is possible.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <p className="text-xl text-[#666666] max-w-3xl mx-auto leading-relaxed">
+              Types of trusted medical and professional resources to look for when seeking HA guidance.
+            </p>
+          </motion.div>
+          
+          <motion.div
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={staggerContainer}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {resources.map((resource, index) => {
+              const Icon = resource.icon
+              return (
+                <motion.div
+                  key={index}
+                  variants={fadeInUp}
+                  whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                >
+                  <Card className="h-full border-[#C1A7E1]/20 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/90 backdrop-blur-sm">
+                    <CardContent className="p-6 flex flex-col h-full">
+                      <div className="flex items-start space-x-3 mb-4">
+                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#C1A7E1] to-[#87C4BB] flex items-center justify-center flex-shrink-0">
+                          <Icon className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-[#333333] font-semibold text-lg leading-tight">
+                            {resource.name}
+                          </h3>
+                        </div>
+                      </div>
+                      <p className="text-[#666666] leading-relaxed text-sm mt-auto">
+                        {resource.description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )
+            })}
+          </motion.div>
+          
+          <motion.div
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true }}
+            variants={fadeInUp}
+            className="text-center mt-12"
+          >
+            <div className="bg-white/60 rounded-lg p-6 max-w-4xl mx-auto border border-[#C1A7E1]/20 backdrop-blur-sm">
+              <p className="text-[#333333] font-medium text-lg mb-2">
+                💡 <strong>Important Note</strong>
+              </p>
+              <p className="text-[#666666] leading-relaxed">
+                These resources are for educational purposes. Always consult with qualified healthcare professionals 
+                for personalized medical advice and treatment plans specific to your situation.
+              </p>
+            </div>
           </motion.div>
         </div>
       </section>
+
     </div>
   )
 }

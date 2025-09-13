@@ -16,6 +16,7 @@ interface MealData {
   image?: string
   isAnalyzing?: boolean
   error?: string
+  calorieCount?: number
 }
 
 interface MealInspiration {
@@ -73,7 +74,8 @@ export function AIMealInspiration({ loggedMeals }: AIMealInspirationProps) {
             description: meal.description,
             timestamp: meal.timestamp,
             analysis: meal.analysis,
-            image: meal.image
+            image: meal.image,
+            calorieCount: meal.calorieCount
           }))
         }),
       })
@@ -83,6 +85,13 @@ export function AIMealInspiration({ loggedMeals }: AIMealInspirationProps) {
       }
 
       const data = await response.json()
+      
+      // Calculate total calories for logging
+      const totalCalories = loggedMeals.reduce((total, meal) => total + (meal.calorieCount || 0), 0)
+      const remainingCalories = Math.max(0, 2500 - totalCalories)
+      console.log(`Recipe generation - Total calories consumed: ${totalCalories}, Remaining: ${remainingCalories}`)
+      console.log(`Recipe generation - Successfully received ${data.suggestions?.length || 0} recipe suggestions`)
+      
       setInspiration(data)
     } catch (error) {
       console.error('Error fetching meal inspiration:', error)
@@ -147,6 +156,7 @@ export function AIMealInspiration({ loggedMeals }: AIMealInspirationProps) {
       }
 
       const recipe = await response.json()
+      console.log(`Full recipe generation - Successfully created recipe for: ${mealTitle}`)
       setSelectedRecipe(recipe)
     } catch (error) {
       console.error('Error generating recipe:', error)

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import health, bbt, meals, ai, health_profile
+from app.routers import health, bbt, meals, ai, health_profile, daily_tracking
 from app.core.database import create_tables
 from dotenv import load_dotenv
 
@@ -35,7 +35,7 @@ app.include_router(bbt.router, prefix="/api/bbt", tags=["bbt"])
 app.include_router(meals.router, prefix="/api/meals", tags=["meals"])
 app.include_router(ai.router, prefix="/api/ai", tags=["ai"])
 app.include_router(health_profile.router, prefix="/api/health-profile", tags=["health-profile"])
-
+app.include_router(daily_tracking.router)
 
 @app.get("/")
 async def root():

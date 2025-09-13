@@ -68,9 +68,9 @@ class GeminiClient:
             return self._create_fallback_response(meal_type, f"Error: {str(e)}")
 
     def _create_analysis_prompt(self, meal_type: str, description: str) -> str:
-        """Create a detailed prompt for Gemini to analyze meals with encouraging, specific feedback"""
+        """Create a detailed prompt for Gemini to analyze meals with encouraging feedback and calorie estimation"""
         return f"""
-You are an encouraging nutritionist specializing in metabolic and hormonal health recovery. Analyze this {meal_type} meal and provide a warm, encouraging response that highlights what's nutritionally beneficial about each component.
+You are an encouraging nutritionist specializing in metabolic and hormonal health recovery. Analyze this {meal_type} meal and provide a warm, encouraging response that highlights what's nutritionally beneficial about each component, followed by an estimated calorie count.
 
 Meal Description: {description}
 
@@ -82,6 +82,9 @@ Write a natural, conversational response (2-3 sentences) that:
 - Feels personal and supportive
 - Ends with a brief suggestion for how to improve the meal or a complementary food/drink
 
+After your encouraging analysis, provide an estimated calorie count for the meal on a new line in this exact format:
+ESTIMATED_CALORIES: [number]
+
 Analysis priorities (incorporate naturally without explicitly mentioning):
 - Adequate calorie density for metabolic recovery
 - Healthy fats for hormone production (omega-3s, monounsaturated fats)
@@ -90,15 +93,35 @@ Analysis priorities (incorporate naturally without explicitly mentioning):
 - Micronutrients supporting metabolic health
 - Celebrating nourishing, energy-dense choices
 
-Example style: "What a fantastic breakfast choice! The eggs provide calorie-dense complete protein and healthy fats that support hormone production, while the avocado adds heart-healthy monounsaturated fats. The berries bring antioxidants and fiber for gut health. You're giving your body exactly what it needs to thrive and maintain steady energy throughout the morning! Consider adding a glass of whole milk or a handful of nuts for extra calcium and healthy fats."
+Example style: "What a fantastic breakfast choice! The eggs provide calorie-dense complete protein and healthy fats that support hormone production, while the avocado adds heart-healthy monounsaturated fats. The berries bring antioxidants and fiber for gut health. You're giving your body exactly what it needs to thrive and maintain steady energy throughout the morning! Consider adding a glass of whole milk or a handful of nuts for extra calcium and healthy fats.
+ESTIMATED_CALORIES: 450"
 
-IMPORTANT: Provide ONLY the analysis text. Do not include any prefixes like "Here is a response:" or "Analysis:" - just the encouraging nutritional feedback.
+IMPORTANT: Provide ONLY the analysis text followed by the calorie estimate. Do not include any prefixes like "Here is a response:" or "Analysis:" - just the encouraging nutritional feedback and calorie count.
 """
 
     def _parse_gemini_response(self, response_text: str, meal_type: str) -> MealAnalysisResponse:
-        """Parse Gemini's natural language response into our schema"""
+        """Parse Gemini's natural language response into our schema with calorie extraction"""
         # Clean up the response text
         analysis_text = response_text.strip()
+        
+        # Extract calorie estimate from response
+        estimated_calories = None
+        if "ESTIMATED_CALORIES:" in analysis_text:
+            try:
+                # Split by the calorie marker
+                parts = analysis_text.split("ESTIMATED_CALORIES:")
+                analysis_text = parts[0].strip()  # Text before calories
+                calorie_part = parts[1].strip()  # Text after calories
+                
+                # Extract just the number from the calorie part
+                import re
+                calorie_match = re.search(r'\d+', calorie_part)
+                if calorie_match:
+                    estimated_calories = int(calorie_match.group())
+                    print(f"Extracted calorie estimate: {estimated_calories} for {meal_type}")
+            except (ValueError, IndexError) as e:
+                print(f"Error parsing calorie estimate: {e}")
+                estimated_calories = None
         
         # Remove any markdown formatting if present
         if "```" in analysis_text:
@@ -156,7 +179,7 @@ IMPORTANT: Provide ONLY the analysis text. Do not include any prefixes like "Her
             nutritional_highlights=analysis_text,  # Use the full response as highlights
             encouragement=analysis_text,  # Use the same encouraging text
             processing_level="minimal",
-            estimated_calories=None
+            estimated_calories=estimated_calories
         )
 
     def _create_fallback_response(self, meal_type: str, error_message: str) -> MealAnalysisResponse:
@@ -190,11 +213,22 @@ IMPORTANT: Provide ONLY the analysis text. Do not include any prefixes like "Her
     def generate_meal_inspiration(self, logged_meals: List[dict]) -> MealInspirationResponse:
         """Generate personalized meal suggestions based on user's daily meals"""
         
+        # Calculate total calories for logging
+        total_calories = 0
+        for meal in logged_meals:
+            calories = meal.get('calorieCount', 0) or (meal.get('analysis', {}).get('estimated_calories', 0) if meal.get('analysis') else 0)
+            total_calories += calories
+        
+        remaining_calories = max(0, 2500 - total_calories)
+        print(f"Recipe generation - Total calories consumed: {total_calories}, Remaining: {remaining_calories}")
+        
         # Create prompt for meal inspiration
         prompt = self._create_inspiration_prompt(logged_meals)
         
         try:
+            print(f"Recipe generation - Sending prompt to AI with {len(logged_meals)} meals")
             response = self.model.generate_content(prompt)
+            print(f"Recipe generation - AI response received, parsing JSON...")
             
             # Parse the JSON response
             response_text = response.text.strip()
@@ -204,6 +238,7 @@ IMPORTANT: Provide ONLY the analysis text. Do not include any prefixes like "Her
                 response_text = response_text[3:-3].strip()
             
             data = json.loads(response_text)
+            print(f"Recipe generation - Successfully parsed {len(data.get('suggestions', []))} recipe suggestions")
             
             # Create MealInspiration objects with generated image URLs
             suggestions = []
@@ -221,12 +256,14 @@ IMPORTANT: Provide ONLY the analysis text. Do not include any prefixes like "Her
                     why_recommended=suggestion['why_recommended']
                 ))
             
-            return MealInspirationResponse(
-                suggestions=suggestions,
-                daily_analysis=data.get('daily_analysis', ''),
-                encouragement=data.get('encouragement', '')
+            result = MealInspirationResponse(
+                daily_analysis=data.get('daily_analysis', 'Your nutrition choices today show great care for your body.'),
+                encouragement=data.get('encouragement', 'Keep up the wonderful work of nourishing yourself!'),
+                suggestions=suggestions
             )
-            
+            print(f"Recipe generation - Successfully created response with {len(suggestions)} suggestions")
+            return result
+
         except Exception as e:
             print(f"Error generating meal inspiration: {str(e)}")
             return self._create_fallback_inspiration()
@@ -234,6 +271,7 @@ IMPORTANT: Provide ONLY the analysis text. Do not include any prefixes like "Her
     def generate_full_recipe(self, meal_title: str) -> FullRecipe:
         """Generate a complete recipe for a specific meal"""
         
+        print(f"Full recipe generation - Creating recipe for: {meal_title}")
         prompt = self._create_recipe_prompt(meal_title)
         
         try:
@@ -251,7 +289,7 @@ IMPORTANT: Provide ONLY the analysis text. Do not include any prefixes like "Her
             data = json.loads(response_text)
             print(f"Parsed recipe data: {data.get('title', 'No title')}")  # Debug log
             
-            return FullRecipe(
+            result = FullRecipe(
                 title=data['title'],
                 description=data['description'],
                 prep_time=data['prep_time'],
@@ -263,6 +301,8 @@ IMPORTANT: Provide ONLY the analysis text. Do not include any prefixes like "Her
                 tips=data['tips'],
                 encouragement=data['encouragement']
             )
+            print(f"Full recipe generation - Successfully created recipe for: {meal_title}")
+            return result
             
         except Exception as e:
             print(f"Error generating recipe for '{meal_title}': {str(e)}")
@@ -357,16 +397,40 @@ IMPORTANT: Provide ONLY the analysis text. Do not include any prefixes like "Her
         return f"data:image/svg+xml;base64,{svg_base64}"
 
     def _create_inspiration_prompt(self, logged_meals: List[dict]) -> str:
-        """Create prompt for generating meal inspiration based on daily meals"""
+        """Create prompt for generating meal inspiration based on daily meals with calorie consideration"""
         
         meals_summary = ""
+        total_calories = 0
+        
         if logged_meals:
-            meals_summary = "\n".join([
-                f"- {meal.get('meal_type', 'Unknown')}: {meal.get('analysis', {}).get('overall_assessment', 'No analysis available yet') if meal.get('analysis') else 'Analysis pending'}"
-                for meal in logged_meals
-            ])
+            meal_details = []
+            for meal in logged_meals:
+                analysis = meal.get('analysis', {})
+                # Get calories from calorieCount field (frontend) or analysis.estimated_calories (fallback)
+                calories = meal.get('calorieCount', 0) or (analysis.get('estimated_calories', 0) if analysis else 0)
+                if calories:
+                    total_calories += calories
+                
+                meal_info = f"- {meal.get('meal_type', 'Unknown')}: {analysis.get('overall_assessment', 'No analysis available yet') if analysis else 'Analysis pending'}"
+                if calories:
+                    meal_info += f" (Estimated: {calories} calories)"
+                meal_details.append(meal_info)
+            
+            meals_summary = "\n".join(meal_details)
         else:
             meals_summary = "No meals logged yet today"
+        
+        remaining_calories = max(0, 2500 - total_calories)
+        calorie_guidance = ""
+        
+        if remaining_calories > 1500:
+            calorie_guidance = "Focus on substantial, nourishing meals that provide excellent energy density to support optimal daily nourishment."
+        elif remaining_calories > 800:
+            calorie_guidance = "Suggest satisfying meals that help reach optimal nourishment and energy levels."
+        elif remaining_calories > 300:
+            calorie_guidance = "Recommend lighter but still nourishing options that complement today's eating."
+        else:
+            calorie_guidance = "Daily nourishment goals are well met! Suggest gentle, satisfying options if additional fuel is desired."
         
         return f"""
 You are an encouraging nutritionist specializing in metabolic and hormonal health recovery. Based on the AI nutritional analysis of the user's meals logged today, suggest 3 personalized meal ideas that would complement their nutrition and support their recovery journey.
@@ -374,13 +438,16 @@ You are an encouraging nutritionist specializing in metabolic and hormonal healt
 Today's meal analyses (from AI nutritional assessment):
 {meals_summary}
 
+Total calories consumed today: {total_calories}
+{calorie_guidance}
+
 Based on these detailed nutritional analyses, suggest meals that would:
 - Complement the nutritional profile already established
 - Fill any gaps identified in the analyses
 - Build upon the positive aspects noted
 - Provide variety while maintaining nutritional excellence
 - Support continued metabolic and hormonal health recovery
-- Focus on adequate calories and nourishment
+- Help reach optimal daily nourishment in a gentle, encouraging way
 
 Return your response as valid JSON with this exact structure:
 {{
@@ -412,14 +479,19 @@ Return your response as valid JSON with this exact structure:
 }}
 
 Focus on recovery-friendly meals that are:
-- Calorie-dense and nourishing
+- Appropriately nourishing for remaining daily needs
 - Rich in healthy fats for hormone production (from diverse sources like nuts, seeds, olive oil, coconut, eggs, etc.)
 - Include quality protein (vary between chicken, turkey, beef, pork, eggs, beans, lentils, tofu, etc.)
 - Complex carbohydrates (explore rice, pasta, potatoes, oats, barley, etc.)
 - Contain micronutrients for metabolic health
 - Appealing and not restrictive
+- Sized appropriately to help reach optimal daily nourishment without being overwhelming
 
-IMPORTANT: Provide diverse, creative meal suggestions. Avoid repeatedly suggesting the same ingredients like salmon, quinoa, or avocado. Explore different cuisines, cooking methods, and ingredient combinations to keep suggestions fresh and exciting.
+IMPORTANT: 
+1. Provide diverse, creative meal suggestions. Avoid repeatedly suggesting the same ingredients like salmon, quinoa, or avocado. Explore different cuisines, cooking methods, and ingredient combinations to keep suggestions fresh and exciting.
+2. Consider the remaining energy needs when suggesting portion sizes and meal types - substantial meals when more nourishment is needed, lighter options when less is needed.
+3. NEVER mention specific calorie numbers, calorie goals, calorie targets, or any numeric calorie values in user-facing content. Always frame recommendations positively around nourishment and energy.
+4. Use gentle, non-triggering language focused on wellness, nourishment, and energy rather than numbers or targets.
 """
 
     def _create_recipe_prompt(self, meal_title: str) -> str:
@@ -429,7 +501,7 @@ IMPORTANT: Provide diverse, creative meal suggestions. Avoid repeatedly suggesti
 You are an encouraging nutritionist specializing in metabolic and hormonal health recovery. Create a complete, detailed recipe for "{meal_title}" that supports recovery and is delicious.
 
 The recipe should be:
-- Nourishing and calorie-adequate
+- Nourishing and energy-adequate
 - Rich in nutrients that support metabolic and hormonal health
 - Easy to follow with clear instructions
 - Include helpful tips for success
@@ -462,11 +534,13 @@ Return your response as valid JSON with this exact structure:
 }}
 
 Focus on creating a recipe that is:
-- Calorie-dense and satisfying
+- Energy-dense and satisfying
 - Rich in healthy fats, quality protein, and complex carbohydrates
 - Contains micronutrients that support hormonal and metabolic health
 - Realistic to make at home
 - Delicious and appealing
+
+IMPORTANT: Never mention specific calorie numbers or calorie targets in the recipe content. Focus on nourishment and energy language instead.
 """
 
     def _create_fallback_inspiration(self) -> MealInspirationResponse:

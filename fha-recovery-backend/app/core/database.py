@@ -30,5 +30,7 @@ def get_db():
 
 # Create tables
 def create_tables():
-    from app.models.health_profile import Base
+    # Import all models to ensure they're registered with Base
+    from app.models.health_profile import HealthProfile
+    from app.models.daily_tracking import DailyTracking
     Base.metadata.create_all(bind=engine)

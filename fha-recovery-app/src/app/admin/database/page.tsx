@@ -20,29 +20,71 @@ interface HealthProfile {
   updated_at: string | null;
 }
 
+interface DailyTrackingEntry {
+  id: number;
+  user_id: string;
+  tracking_date: string;
+  total_calories: number | null;
+  target_calories: number;
+  calories_from_breakfast: number | null;
+  calories_from_lunch: number | null;
+  calories_from_dinner: number | null;
+  calories_from_snacks: number | null;
+  morning_temp: number | null;
+  evening_temp: number | null;
+  energy_level: number | null;
+  mood_rating: number | null;
+  sleep_hours: number | null;
+  exercise_minutes: number | null;
+  water_glasses: number | null;
+  stress_level: number | null;
+  is_complete: boolean;
+  calorie_progress_percentage: number;
+  remaining_calories: number;
+  created_at: string;
+  updated_at: string | null;
+}
+
 interface DatabaseResponse {
   total_profiles: number;
   profiles: HealthProfile[];
 }
 
+interface TrackingResponse {
+  total_entries: number;
+  entries: DailyTrackingEntry[];
+}
+
 export default function DatabaseViewerPage() {
   const [data, setData] = useState<DatabaseResponse | null>(null);
+  const [trackingData, setTrackingData] = useState<TrackingResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
+  const [activeTab, setActiveTab] = useState<'profiles' | 'tracking'>('profiles');
 
   const fetchData = async () => {
     setIsLoading(true);
     setError(null);
     
     try {
-      const response = await fetch('http://localhost:8001/api/health-profile/admin/all-profiles');
-      if (response.ok) {
-        const result = await response.json();
-        setData(result);
+      // Fetch health profiles
+      const profilesResponse = await fetch('http://localhost:8001/api/health-profile/admin/all-profiles');
+      if (profilesResponse.ok) {
+        const profilesResult = await profilesResponse.json();
+        setData(profilesResult);
       } else {
-        setError('Failed to fetch database data');
+        setError('Failed to fetch health profiles data');
+      }
+
+      // Fetch daily tracking data
+      const trackingResponse = await fetch('http://localhost:8001/api/daily-tracking/admin/all-tracking');
+      if (trackingResponse.ok) {
+        const trackingResult = await trackingResponse.json();
+        setTrackingData(trackingResult);
+      } else {
+        console.warn('Failed to fetch tracking data');
       }
     } catch (err) {
       setError('Error connecting to backend');
@@ -101,7 +143,7 @@ export default function DatabaseViewerPage() {
                 <Database className="h-8 w-8 text-[#87C4BB]" />
                 <div>
                   <h1 className="text-3xl font-bold text-gray-800">Database Viewer</h1>
-                  <p className="text-gray-600">Health Profile Management</p>
+                  <p className="text-gray-600">Health Profiles & Daily Tracking Management</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -143,10 +185,10 @@ export default function DatabaseViewerPage() {
               ) : error ? (
                 <p className="text-red-600">{error}</p>
               ) : data ? (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div className="text-center p-4 bg-gray-50 rounded-lg">
                     <div className="text-2xl font-bold text-[#87C4BB]">{data.total_profiles}</div>
-                    <div className="text-sm text-gray-600">Total Profiles</div>
+                    <div className="text-sm text-gray-600">Health Profiles</div>
                   </div>
                   <div className="text-center p-4 bg-gray-50 rounded-lg">
                     <div className="text-2xl font-bold text-green-600">
@@ -155,21 +197,56 @@ export default function DatabaseViewerPage() {
                     <div className="text-sm text-gray-600">Completed Surveys</div>
                   </div>
                   <div className="text-center p-4 bg-gray-50 rounded-lg">
-                    <div className="text-2xl font-bold text-orange-600">
-                      {data.profiles.filter(p => !p.survey_completed).length}
+                    <div className="text-2xl font-bold text-[#FFB4A2]">
+                      {trackingData?.total_entries || 0}
                     </div>
-                    <div className="text-sm text-gray-600">Incomplete Surveys</div>
+                    <div className="text-sm text-gray-600">Tracking Entries</div>
+                  </div>
+                  <div className="text-center p-4 bg-gray-50 rounded-lg">
+                    <div className="text-2xl font-bold text-[#C1A7E1]">
+                      {trackingData?.entries.filter(e => e.is_complete).length || 0}
+                    </div>
+                    <div className="text-sm text-gray-600">Complete Days</div>
                   </div>
                 </div>
               ) : null}
             </CardContent>
           </Card>
 
-          {/* Profiles List */}
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle>Health Profiles</CardTitle>
-            </CardHeader>
+          {/* Tab Navigation */}
+          <div className="mb-6">
+            <div className="border-b border-gray-200">
+              <nav className="-mb-px flex space-x-8">
+                <button
+                  onClick={() => setActiveTab('profiles')}
+                  className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === 'profiles'
+                      ? 'border-[#87C4BB] text-[#87C4BB]'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  Health Profiles ({data?.total_profiles || 0})
+                </button>
+                <button
+                  onClick={() => setActiveTab('tracking')}
+                  className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === 'tracking'
+                      ? 'border-[#87C4BB] text-[#87C4BB]'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  Daily Tracking ({trackingData?.total_entries || 0})
+                </button>
+              </nav>
+            </div>
+          </div>
+
+          {/* Content based on active tab */}
+          {activeTab === 'profiles' ? (
+            <Card className="border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle>Health Profiles</CardTitle>
+              </CardHeader>
             <CardContent>
               {isLoading ? (
                 <div className="space-y-4">
@@ -245,6 +322,109 @@ export default function DatabaseViewerPage() {
               )}
             </CardContent>
           </Card>
+          ) : (
+            <Card className="border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle>Daily Tracking Data</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {isLoading ? (
+                  <div className="space-y-4">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="animate-pulse">
+                        <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
+                        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                      </div>
+                    ))}
+                  </div>
+                ) : error ? (
+                  <p className="text-red-600 text-center py-8">{error}</p>
+                ) : trackingData && trackingData.entries.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Database className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-500 text-lg">No tracking data found</p>
+                    <p className="text-gray-400 text-sm">Daily tracking entries will appear here</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {trackingData?.entries.map((entry) => (
+                      <div key={entry.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <div className="font-medium text-gray-800">
+                              {entry.user_id}
+                            </div>
+                            <Badge className="bg-blue-100 text-blue-800">
+                              {entry.tracking_date}
+                            </Badge>
+                            <Badge 
+                              variant={entry.is_complete ? "default" : "secondary"}
+                              className={entry.is_complete ? "bg-green-100 text-green-800" : "bg-orange-100 text-orange-800"}
+                            >
+                              {entry.is_complete ? (
+                                <><CheckCircle className="h-3 w-3 mr-1" /> Complete</>
+                              ) : (
+                                <><XCircle className="h-3 w-3 mr-1" /> Incomplete</>
+                              )}
+                            </Badge>
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            Created: {formatDate(entry.created_at)}
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
+                          <div>
+                            <span className="font-medium text-gray-600">Calories:</span>
+                            <p className="text-gray-800">
+                              {entry.total_calories || 0} / {entry.target_calories} 
+                              <span className="text-xs text-gray-500 ml-1">
+                                ({entry.calorie_progress_percentage.toFixed(0)}%)
+                              </span>
+                            </p>
+                          </div>
+                          <div>
+                            <span className="font-medium text-gray-600">Temperature:</span>
+                            <p className="text-gray-800">
+                              {entry.morning_temp ? `${entry.morning_temp}°F` : 'N/A'}
+                              {entry.evening_temp && ` / ${entry.evening_temp}°F`}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="font-medium text-gray-600">Energy/Mood:</span>
+                            <p className="text-gray-800">
+                              {entry.energy_level ? `${entry.energy_level}/10` : 'N/A'}
+                              {entry.mood_rating && ` / ${entry.mood_rating}/10`}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="font-medium text-gray-600">Sleep/Exercise:</span>
+                            <p className="text-gray-800">
+                              {entry.sleep_hours ? `${entry.sleep_hours}h` : 'N/A'}
+                              {entry.exercise_minutes && ` / ${entry.exercise_minutes}min`}
+                            </p>
+                          </div>
+                        </div>
+                        
+                        {/* Meal breakdown */}
+                        {(entry.calories_from_breakfast || entry.calories_from_lunch || entry.calories_from_dinner || entry.calories_from_snacks) && (
+                          <div className="mt-3 pt-3 border-t border-gray-100">
+                            <span className="font-medium text-gray-600 text-xs">Meal Breakdown:</span>
+                            <div className="grid grid-cols-4 gap-2 mt-1 text-xs">
+                              <div>Breakfast: {entry.calories_from_breakfast || 0}</div>
+                              <div>Lunch: {entry.calories_from_lunch || 0}</div>
+                              <div>Dinner: {entry.calories_from_dinner || 0}</div>
+                              <div>Snacks: {entry.calories_from_snacks || 0}</div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
 
           {/* Clear Database Confirmation Dialog */}
           {showClearConfirm && (

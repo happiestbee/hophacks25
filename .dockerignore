@@ -1,0 +1,41 @@
+# Dependencies
+node_modules
+npm-debug.log*
+
+# Build outputs
+.next
+out
+build
+dist
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode
+.idea
+
+# Logs
+*.log
+
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+STARTUP_GUIDE.md
+docs/
+
+# Scripts
+cleanup.sh
+start-dev.sh
+start-dev-advanced.sh

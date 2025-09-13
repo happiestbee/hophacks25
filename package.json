@@ -15,7 +15,10 @@
     "start:frontend": "cd fha-recovery-app && npm run start",
     "start:backend": "cd fha-recovery-backend && poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000",
     "format": "cd fha-recovery-app && npm run format && cd ../fha-recovery-backend && poetry run black .",
-    "lint": "cd fha-recovery-app && npm run lint && cd ../fha-recovery-backend && poetry run flake8 ."
+    "lint": "cd fha-recovery-app && npm run lint && cd ../fha-recovery-backend && poetry run flake8 .",
+    "clean": "./cleanup.sh",
+    "clean:full": "./cleanup.sh --full",
+    "size": "du -sh . && echo '' && du -sh * | sort -hr"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

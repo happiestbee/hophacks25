@@ -1,95 +1,121 @@
-# FHA Recovery Backend API
+# FHA Recovery Web Application
 
-A FastAPI backend for the FHA Recovery web application, providing gentle, supportive APIs for health tracking and recovery journey support.
+A gentle, supportive web application for Functional Hypothalamic Amenorrhea (FHA) recovery, built with Next.js and FastAPI.
 
-## Features
+## 🚀 Quick Start
 
-- **BBT Tracking**: API endpoints for basal body temperature data
-- **Meal Logging**: Gentle nutrition tracking and meal suggestions
-- **AI Support**: Recovery-friendly meal suggestions and daily affirmations
-- **Health Monitoring**: Basic health metrics and progress tracking
-
-## Tech Stack
-
-- **FastAPI**: Modern, fast web framework for building APIs
-- **Poetry**: Dependency management and virtual environment
-- **Pydantic**: Data validation and serialization
-- **scikit-learn**: Machine learning for health insights
-- **pandas/numpy**: Data manipulation and analysis
-- **SQLAlchemy**: Database ORM (ready for PostgreSQL)
-- **Redis**: Caching layer
-
-## Development Setup
-
-1. **Install Poetry** (if not already installed):
-   ```bash
-   pip install poetry
-   ```
-
-2. **Install dependencies**:
-   ```bash
-   poetry install
-   ```
-
-3. **Run the development server**:
-   ```bash
-   poetry run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-   ```
-
-4. **Access the API**:
-   - API Documentation: http://localhost:8000/docs
-   - Health Check: http://localhost:8000/api/health
-
-## Code Quality
-
-- **Black**: Code formatting
-- **Flake8**: Linting
-
-Run formatting and linting:
 ```bash
-poetry run black .
-poetry run flake8 .
+# Install all dependencies
+npm run install:all
+
+# Start both servers
+npm run dev
 ```
 
-## API Endpoints
-
-### Health
-- `GET /api/health` - Health check
-
-### BBT Tracking
-- `GET /api/bbt/` - Get BBT readings
-- `POST /api/bbt/` - Create new BBT reading
-
-### Meals
-- `GET /api/meals/` - Get logged meals
-- `POST /api/meals/` - Log new meal
-
-### AI Support
-- `GET /api/ai/meal-suggestion` - Get recovery-friendly meal suggestion
-- `GET /api/ai/daily-affirmation` - Get daily affirmation
-
-## Project Structure
+## 📁 Project Structure
 
 ```
-app/
-├── main.py              # FastAPI application
-├── routers/             # API route handlers
-│   ├── health.py
-│   ├── bbt.py
-│   ├── meals.py
-│   └── ai.py
-├── schemas/             # Pydantic models
-│   ├── bbt.py
-│   ├── meals.py
-│   └── ai.py
-├── models/              # Database models (future)
-└── core/                # Core utilities (future)
+hophacks25/
+├── fha-recovery-app/          # Next.js Frontend
+├── fha-recovery-backend/      # FastAPI Backend
+├── docs/                      # Documentation
+├── package.json               # Root dependencies & scripts
+└── scripts/                   # Utility scripts
 ```
 
-## Design Principles
+## 🛠️ Available Commands
 
-This API follows the gentle, supportive approach outlined in the requirements:
-- Encouraging and non-triggering language
-- Compassionate data handling
-- Recovery-focused features
-- Privacy and security considerations
+### Development
+- `npm run dev` - Start both frontend and backend
+- `npm run dev:frontend` - Start only frontend
+- `npm run dev:backend` - Start only backend
+
+### Installation
+- `npm run install:all` - Install all dependencies
+- `npm run install:frontend` - Install frontend dependencies
+- `npm run install:backend` - Install backend dependencies
+
+### Code Quality
+- `npm run format` - Format code in both projects
+- `npm run lint` - Lint code in both projects
+
+### Cleanup & Optimization
+- `npm run clean` - Remove build artifacts and OS files
+- `npm run clean:full` - Remove everything including node_modules
+- `npm run size` - Show current project size
+- `./build-production.sh` - Create optimized production build
+
+## 🌐 Server URLs
+
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:8000
+- **API Documentation**: http://localhost:8000/docs
+
+## 📊 Project Size
+
+The project is currently **~533MB** in development mode, which is normal for a full-stack Next.js + FastAPI application. See [SIZE_OPTIMIZATION.md](SIZE_OPTIMIZATION.md) for detailed information about size optimization.
+
+## 🧹 Size Optimization
+
+For a smaller project size:
+
+```bash
+# Remove build artifacts and OS files
+npm run clean
+
+# Remove everything including node_modules (minimal size)
+npm run clean:full
+
+# Reinstall when needed
+npm run install:all
+```
+
+## 🏗️ Production Build
+
+```bash
+# Create optimized production build
+./build-production.sh
+```
+
+## 📚 Documentation
+
+- [Startup Guide](STARTUP_GUIDE.md) - How to start the application
+- [Size Optimization](SIZE_OPTIMIZATION.md) - Detailed size optimization guide
+- [Requirements](docs/requirements.md) - Technical requirements and design principles
+- [Tasks](docs/tasks.md) - Development tasks and progress
+
+## 🎯 Features
+
+- **Gentle BBT Tracking**: Compassionate health monitoring
+- **Meal Logging**: Supportive nutrition tracking
+- **AI Suggestions**: Recovery-friendly meal recommendations
+- **Self-Love Space**: Affirmation board and daily encouragement
+- **Clean Design**: Fresh, minimalist aesthetic following FHA recovery principles
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **Next.js** - React framework with SSR/SSG
+- **TypeScript** - Type safety
+- **Tailwind CSS** - Utility-first styling
+- **shadcn/ui** - Component library
+- **Nivo** - Data visualization
+
+### Backend
+- **FastAPI** - Modern Python web framework
+- **Poetry** - Dependency management
+- **Pydantic** - Data validation
+- **scikit-learn** - Machine learning
+- **SQLAlchemy** - Database ORM
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests and linting
+5. Submit a pull request
+
+## 📄 License
+
+MIT License - see LICENSE file for details

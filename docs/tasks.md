@@ -1,15 +1,15 @@
 # Development Tasks for [App Name] Product Demonstration
 
-This document details the individual tasks required to develop a functional demonstration of the [App Name] web application. The focus is on implementing the core features and foundational components necessary to showcase the product proposal effectively, adhering to the specified technical stack and design guidelines.
+This document details the individual tasks required to develop a functional demonstration of the [App Name] web application. The focus is on implementing the core features and foundational components necessary to showcase the product proposal effectively, adhering to the specified technical stack and design guidelines. Whenever a task is complete, please mark it with a checkmark in this file. 
 
 ## 1. Project Setup & Core Infrastructure
 
-* **Task 1.1: Initialize Next.js Project**
+* **Task 1.1: Initialize Next.js Project** ✅
     * Create a new Next.js project.
     * Configure Tailwind CSS.
     * Integrate `shadcn/ui` (initialize with desired theme/colors as per `requirements.md`).
     * Set up ESLint and Prettier for consistent code quality.
-* **Task 1.2: Initialize FastAPI Backend**
+* **Task 1.2: Initialize FastAPI Backend** ✅
     * Create a new FastAPI project.
     * Set up project structure (e.g., `app/`, `routers/`).
     * Configure Poetry for dependency management.
@@ -86,11 +86,11 @@ This document details the individual tasks required to develop a functional demo
 
 ## 6. Backend API Development (Minimal for Demo)
 
-* **Task 6.1: Dummy API Endpoint for BBT (GET)**
+* **Task 6.1: Dummy API Endpoint for BBT (GET)** ✅
     * Create a FastAPI endpoint `/api/bbt` that returns a hardcoded array of BBT data for a demo user over the last 30 days.
-* **Task 6.2: Dummy API Endpoint for Meals (GET)**
+* **Task 6.2: Dummy API Endpoint for Meals (GET)** ✅
     * Create a FastAPI endpoint `/api/meals` that returns a hardcoded array of example logged meals.
-* **Task 6.3: Dummy API Endpoint for AI Meal Suggestion (GET)**
+* **Task 6.3: Dummy API Endpoint for AI Meal Suggestion (GET)** ✅
     * Create a FastAPI endpoint `/api/ai/meal-suggestion` that returns a hardcoded "recovery-friendly" meal suggestion text.
 
 ## 7. Quality Assurance & Polish

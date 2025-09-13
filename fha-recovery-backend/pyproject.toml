@@ -1,0 +1,57 @@
+[tool.poetry]
+name = "fha-recovery-backend"
+version = "1.0.0"
+description = "FastAPI backend for FHA recovery web application"
+authors = ["FHA Recovery Team"]
+readme = "README.md"
+packages = [{include = "app"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.116.1"
+uvicorn = "^0.35.0"
+scikit-learn = "^1.7.2"
+pandas = "^2.3.2"
+numpy = "^2.3.3"
+sqlalchemy = "^2.0.43"
+alembic = "^1.16.5"
+redis = "^6.4.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "^25.1.0"
+flake8 = "^7.3.0"
+
+[tool.poetry.scripts]
+dev = "uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
+start = "uvicorn app.main:app --host 0.0.0.0 --port 8000"
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503"]
+exclude = [
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+    ".venv",
+    ".eggs",
+    "*.egg",
+]

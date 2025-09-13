@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import PageLayout from '@/components/layout/PageLayout'
+import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { FHANutritionCalculator } from '@/lib/nutrition-calculator'
@@ -253,7 +254,8 @@ export default function NourishThrive() {
   }
 
   return (
-    <PageLayout>
+    <ProtectedRoute>
+      <PageLayout>
       <div className="space-y-6">
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold text-[#333333]">Nourish & Thrive</h1>
@@ -379,6 +381,7 @@ export default function NourishThrive() {
         mealTitle={selectedMealForAnalysis?.meal_type ? `${selectedMealForAnalysis.meal_type} meal` : "Your Meal"}
         error={selectedMealForAnalysis?.error}
       />
-    </PageLayout>
+      </PageLayout>
+    </ProtectedRoute>
   )
 }

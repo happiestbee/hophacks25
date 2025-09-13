@@ -7,6 +7,7 @@
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
     "dev:frontend": "cd fha-recovery-app && npm run dev",
     "dev:backend": "cd fha-recovery-backend && poetry run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
+    "dev:https": "next dev --experimental-https --experimental-https-key ./localhost-key.pem --experimental-https-cert ./localhost.pem",
     "install:all": "npm run install:frontend && npm run install:backend",
     "install:frontend": "cd fha-recovery-app && npm install",
     "install:backend": "cd fha-recovery-backend && poetry install",
@@ -32,5 +33,10 @@
     "fastapi"
   ],
   "author": "FHA Recovery Team",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "next": "^15.5.3",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  }
 }

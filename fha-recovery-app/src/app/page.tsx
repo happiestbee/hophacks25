@@ -224,8 +224,8 @@ export default function Home() {
               <Button 
                 className="px-8 py-3 text-lg font-semibold rounded-xl bg-[#FFB4A2] hover:bg-[#FF9F8A] text-white shadow-lg hover:shadow-xl transition-all duration-300"
                 onClick={() => {
-                  // Navigate to sign-in page (you can replace this with actual routing)
-                  window.location.href = '/signin'
+                  // Navigate to signup page
+                  window.location.href = '/login'
                 }}
               >
                 Start Your Journey

@@ -1,9 +1,11 @@
 import PageLayout from '@/components/layout/PageLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import ProtectedRoute from '@/components/auth/ProtectedRoute'
 
 export default function LearnMore() {
   return (
-    <PageLayout>
+    <ProtectedRoute>
+      <PageLayout>
       <div className="space-y-6">
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold text-[#333333]">Learn More</h1>
@@ -22,6 +24,7 @@ export default function LearnMore() {
           </CardContent>
         </Card>
       </div>
-    </PageLayout>
+      </PageLayout>
+    </ProtectedRoute>
   )
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import Navbar from '@/components/layout/Navbar'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -8,7 +9,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Your Self-Love Journey - FHA Recovery',
+  title: 'Harmonia - FHA Recovery',
   description:
     'A gentle, supportive space for your FHA recovery journey. Track, learn, and thrive with compassion.',
 }
@@ -21,6 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} font-sans antialiased`}>
+        <Navbar />
         {children}
       </body>
     </html>

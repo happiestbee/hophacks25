@@ -51,12 +51,12 @@ This document details the individual tasks required to develop a functional demo
 
 ## 4. Gentle Calorie Tracking Page
 
-* **Task 4.1: Fuel Meter (Progress Bar)**
+* **Task 4.1: Fuel Meter (Progress Bar)** ✅
     * Implement the horizontal "Fuel Meter" progress bar (using `shadcn/ui` Progress).
     * Connect its value to a simple mock or manually updated "energy level" in the frontend for demo purposes.
     * Display text status ("Optimal", "Moderate", "Needs More Fuel") dynamically based on the progress bar value.
     * Include the encouraging tagline.
-* **Task 4.2: Log Meals Input**
+* **Task 4.2: Log Meals Input** ✅
     * Implement the "Log Today's Meals +" button.
     * On click, open a simple modal/form (using `shadcn/ui` Dialog/Form) to input meal details (e.g., "Breakfast", "Lunch", "Dinner", simple text description).
     * *(For demo: Save logged meals to frontend state only for display.)*

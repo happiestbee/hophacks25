@@ -151,7 +151,7 @@ export default function Home() {
             <div className="space-y-0">
               <h1 className="text-6xl leading-tight font-bold text-[#333333] lg:text-7xl">
                 Welcome to Your
-                <span className="block text-[#FF8C42] italic font-light healing-journey-text">Healing Journey</span>
+                <span className="block text-[#FFB4A2] italic font-light healing-journey-text">Healing Journey</span>
               </h1>
 
               <p className="mx-auto max-w-6xl text-lg leading-relaxed text-[#666666] lg:text-xl mt-6">
@@ -216,21 +216,21 @@ export default function Home() {
                     </p>
                   </div>
                 </div>
-                
-                {/* Start Your Journey Button */}
-                <div className="pt-4">
-                  <Button 
-                    className="px-8 py-3 text-lg font-semibold rounded-xl bg-[#FF8C42] hover:bg-[#E67A35] text-white shadow-lg hover:shadow-xl transition-all duration-300"
-                    onClick={() => {
-                      // Navigate to sign-in page (you can replace this with actual routing)
-                      window.location.href = '/signin'
-                    }}
-                  >
-                    Start Your Journey
-                  </Button>
-                </div>
               </div>
             )}
+
+            {/* Start Your Journey Button - Always Visible */}
+            <div className="pt-8">
+              <Button 
+                className="px-8 py-3 text-lg font-semibold rounded-xl bg-[#FFB4A2] hover:bg-[#FF9F8A] text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                onClick={() => {
+                  // Navigate to sign-in page (you can replace this with actual routing)
+                  window.location.href = '/signin'
+                }}
+              >
+                Start Your Journey
+              </Button>
+            </div>
           </div>
 
           {/* Scroll Indicator - Right Side */}

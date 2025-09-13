@@ -4,6 +4,7 @@ import './globals.css'
 import Navbar from '@/components/layout/Navbar'
 import AuthProvider from '@/components/providers/session-provider'
 import ConditionalNavbar from '@/components/layout/ConditionalNavbar'
+import { UserFlowHandler } from '@/components/auth/UserFlowHandler'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -25,6 +26,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} font-sans antialiased`}>
         <AuthProvider>
+          <UserFlowHandler />
           <ConditionalNavbar />
           {children}
         </AuthProvider>

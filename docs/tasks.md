@@ -26,7 +26,7 @@ This document details the individual tasks required to develop a functional demo
     * Create a consistent `Layout` component that wraps all page content.
     * Include `shadcn/ui` Card component as the base for content sections.
     * Implement primary background color and consistent padding/margins.
-* **Task 2.3: Placeholder Login/Registration Screens**
+* **Task 2.3: Placeholder Login/Registration Screens** ✅
     * Create basic placeholder Login and Registration pages (using `shadcn/ui` Input, Button, Card components).
     * For the demo, these can be simple, non-functional forms that navigate to the main app dashboard directly on "submit" for demonstration purposes without actual authentication.
 

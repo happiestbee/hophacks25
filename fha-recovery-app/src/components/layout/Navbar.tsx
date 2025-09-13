@@ -3,10 +3,12 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Leaf, User } from 'lucide-react'
+import { useSession, signOut } from 'next-auth/react'
+import { Leaf, User, LogOut } from 'lucide-react'
 
 export default function Navbar() {
   const pathname = usePathname()
+  const { data: session } = useSession()
 
   const isActive = (path: string) => pathname === path
 
@@ -56,9 +58,29 @@ export default function Navbar() {
             </Link>
           </div>
           
-          {/* User Account Icon - Right Section */}
-          <div className="ml-auto">
-            <User className="text-[#333333] text-xl hover:text-[#FFB4A2] transition-colors cursor-pointer" />
+          {/* User Account Section - Right Section */}
+          <div className="ml-auto flex items-center gap-3">
+            {session ? (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-[#656262]">
+                  {session.user?.name || session.user?.email}
+                </span>
+                <button
+                  onClick={() => signOut()}
+                  className="flex items-center gap-1 text-[#666666] hover:text-[#FFB4A2] transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="flex items-center gap-1 text-[#666666] hover:text-[#FFB4A2] transition-colors"
+              >
+                <User className="w-5 h-5" />
+                <span className="text-sm">Login</span>
+              </Link>
+            )}
           </div>
         </div>
       </div>

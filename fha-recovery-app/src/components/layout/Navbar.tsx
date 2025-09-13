@@ -56,6 +56,16 @@ export default function Navbar() {
             >
               Self-Love Space
             </Link>
+            <Link 
+              href="/learn-more" 
+              className={`font-medium px-4 py-1.5 rounded-full transition-colors ${
+                isActive('/learn-more')
+                  ? 'bg-[#FFB4A2] text-white'
+                  : 'text-[#666666] hover:text-[#FFB4A2]'
+              }`}
+            >
+              Learn More
+            </Link>
           </div>
           
           {/* User Account Section - Right Section */}

@@ -211,7 +211,7 @@
 
 /* Custom input focus styles */
 input:focus {
-  box-shadow: 0 0 0 3px rgba(135, 196, 187, 0.1);
+  box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.1);
 }
 
 /* AI Message animations */
@@ -242,4 +242,26 @@ input:focus {
 
 .ai-avatar {
   animation: gentle-pulse 2s ease-in-out infinite;
+}
+
+/* Elegant styling for healing journey text */
+.healing-journey-text {
+  text-shadow: 0 2px 4px rgba(255, 140, 66, 0.1);
+  letter-spacing: 0.02em;
+}
+
+/* Fade in animation for quotes */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out;
 }

@@ -87,3 +87,4 @@ venv.bak/
 # Temporary files
 *.tmp
 *.temp
+node_modules/

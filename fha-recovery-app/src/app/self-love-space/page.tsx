@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, PanInfo } from 'framer-motion'
 import PageLayout from '@/components/layout/PageLayout'
+import MirrorBoard from '@/components/MirrorBoard'
 
 export default function SelfLoveSpace() {
   console.log('🔥 SELF LOVE SPACE COMPONENT LOADED 🔥')
@@ -12,7 +13,32 @@ export default function SelfLoveSpace() {
   const [isMirrorOn, setIsMirrorOn] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [stickyNotes, setStickyNotes] = useState<Array<{
+  const [corkboardStickyNotes, setCorkboardStickyNotes] = useState<Array<{
+    id: string
+    text: string
+    x: number
+    y: number
+    color: string
+    rotation: number
+    width: number
+    height: number
+    fontSize: number
+    isEditing: boolean
+    style: string
+  }>>([{
+    id: 'welcome-note',
+    text: 'Sometimes we don\'t always love the way we look — and that\'s okay. Cover your mirror reflection or a blank corkboard with affirmations that remind you of your strength, worth, and beauty.',
+    x: 300,
+    y: 160,
+    color: '#FFFFFF',
+    rotation: -2,
+    width: 360,
+    height: 180,
+    fontSize: 17,
+    isEditing: false,
+    style: 'lined'
+  }])
+  const [mirrorStickyNotes, setMirrorStickyNotes] = useState<Array<{
     id: string
     text: string
     x: number
@@ -27,6 +53,8 @@ export default function SelfLoveSpace() {
   }>>([])
   const [editingNote, setEditingNote] = useState<string | null>(null)
   const [editingText, setEditingText] = useState('')
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const [isSliderActive, setIsSliderActive] = useState(false)
   const [showCustomizeNote, setShowCustomizeNote] = useState(false)
   const [selectedColor, setSelectedColor] = useState('#FFE066')
   const [selectedStyle, setSelectedStyle] = useState('default')
@@ -34,6 +62,7 @@ export default function SelfLoveSpace() {
   const [debouncedText, setDebouncedText] = useState('')
   const [showAffirmationSuggestions, setShowAffirmationSuggestions] = useState(false)
   const [generatedAffirmations, setGeneratedAffirmations] = useState<string[]>([])
+  const [usedAffirmations, setUsedAffirmations] = useState<string[]>([])
   const [draggedNote, setDraggedNote] = useState<string | null>(null)
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const [dragStart, setDragStart] = useState<{ x: number; y: number; stickerX: number; stickerY: number } | null>(null)
@@ -52,7 +81,17 @@ export default function SelfLoveSpace() {
     width: number
     height: number
   }>>([])
-  const [stickers, setStickers] = useState<Array<{
+  const [corkboardStickers, setCorkboardStickers] = useState<Array<{
+    id: string
+    text: string
+    image: string
+    x: number
+    y: number
+    width: number
+    height: number
+    rotation: number
+  }>>([])
+  const [mirrorStickers, setMirrorStickers] = useState<Array<{
     id: string
     text: string
     image: string
@@ -63,6 +102,24 @@ export default function SelfLoveSpace() {
     rotation: number
   }>>([])
   
+  // Helper functions to get current state based on mode
+  const getCurrentStickyNotes = () => mode === 'corkboard' ? corkboardStickyNotes : mirrorStickyNotes
+  const getCurrentStickers = () => mode === 'corkboard' ? corkboardStickers : mirrorStickers
+  const setCurrentStickyNotes = (notes: any) => {
+    if (mode === 'corkboard') {
+      setCorkboardStickyNotes(notes)
+    } else {
+      setMirrorStickyNotes(notes)
+    }
+  }
+  const setCurrentStickers = (stickers: any) => {
+    if (mode === 'corkboard') {
+      setCorkboardStickers(stickers)
+    } else {
+      setMirrorStickers(stickers)
+    }
+  }
+
   // Refs for video element and media stream
   const videoRef = useRef<HTMLVideoElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
@@ -83,7 +140,7 @@ export default function SelfLoveSpace() {
   }, [])
 
   // AI Affirmation Generation
-  const generateAffirmations = (text: string) => {
+  const generateAffirmations = (text: string, excludeUsed: string[] = []) => {
     const lowerText = text.toLowerCase()
     
     // Define negative keywords and their positive affirmations
@@ -306,8 +363,32 @@ export default function SelfLoveSpace() {
       return generalAffirmations.slice(0, 3)
     }
 
-    // Return up to 3 unique affirmations
-    const uniqueAffirmations = [...new Set(foundAffirmations)]
+    // Filter out used affirmations and ensure no duplicates
+    const availableAffirmations = foundAffirmations.filter(affirmation => !excludeUsed.includes(affirmation))
+    const uniqueAffirmations = [...new Set(availableAffirmations)]
+    
+    // If we don't have enough unique affirmations, add some general ones
+    if (uniqueAffirmations.length < 3) {
+      const generalAffirmations = [
+        "I am worthy of love and happiness",
+        "I am enough exactly as I am",
+        "I choose to see my own beauty",
+        "I am capable of amazing things",
+        "I am grateful for who I am becoming",
+        "I am strong and resilient",
+        "I am deserving of peace and joy",
+        "I am beautiful inside and out",
+        "I trust in my own journey",
+        "I am worthy of all good things"
+      ]
+      
+      const additionalAffirmations = generalAffirmations.filter(affirmation => 
+        !excludeUsed.includes(affirmation) && !uniqueAffirmations.includes(affirmation)
+      )
+      
+      uniqueAffirmations.push(...additionalAffirmations)
+    }
+    
     return uniqueAffirmations.slice(0, 3)
   }
 
@@ -323,14 +404,24 @@ export default function SelfLoveSpace() {
   // Generate affirmations when text changes
   useEffect(() => {
     if (debouncedText.trim()) {
-      const suggestions = generateAffirmations(debouncedText)
+      const suggestions = generateAffirmations(debouncedText, usedAffirmations)
       setGeneratedAffirmations(suggestions)
       setShowAffirmationSuggestions(true)
     } else {
       setShowAffirmationSuggestions(false)
       setGeneratedAffirmations([])
     }
-  }, [debouncedText])
+  }, [debouncedText, usedAffirmations])
+
+  // Show default affirmations when popup opens
+  useEffect(() => {
+    if (showCustomizeNote) {
+      // Show some general positive affirmations when popup first opens
+      const defaultAffirmations = generateAffirmations('', usedAffirmations)
+      setGeneratedAffirmations(defaultAffirmations)
+      setShowAffirmationSuggestions(true)
+    }
+  }, [showCustomizeNote, usedAffirmations])
 
   // Sticker data - all available stickers
   const stickerOptions = [
@@ -476,6 +567,22 @@ export default function SelfLoveSpace() {
             radial-gradient(circle at 85% 85%, rgba(255, 215, 0, 0.2) 0%, transparent 40%)
           `
         }
+      case 'lined':
+        return {
+          ...baseStyle,
+          backgroundColor: '#FFFFFF',
+          background: `
+            linear-gradient(to bottom, transparent 0%, transparent 18px, #E8E8E8 18px, #E8E8E8 20px, transparent 20px, transparent 38px, #E8E8E8 38px, #E8E8E8 40px, transparent 40px, transparent 58px, #E8E8E8 58px, #E8E8E8 60px, transparent 60px, transparent 78px, #E8E8E8 78px, #E8E8E8 80px, transparent 80px, transparent 98px, #E8E8E8 98px, #E8E8E8 100px, transparent 100px, transparent 118px, #E8E8E8 118px, #E8E8E8 120px, transparent 120px, transparent 138px, #E8E8E8 138px, #E8E8E8 140px, transparent 140px, transparent 158px, #E8E8E8 158px, #E8E8E8 160px, transparent 160px, transparent 178px, #E8E8E8 178px, #E8E8E8 180px, transparent 180px),
+            linear-gradient(135deg, #FFFFFF 0%, #F8F8F8 100%)
+          `,
+          backgroundSize: '100% 20px, 100% 100%',
+          border: '1px solid #C0C0C0',
+          boxShadow: `
+            0 4px 8px rgba(0,0,0,0.15),
+            0 2px 4px rgba(0,0,0,0.1),
+            inset 0 1px 0 rgba(255,255,255,0.8)
+          `
+        }
       default:
         return baseStyle
     }
@@ -485,17 +592,17 @@ export default function SelfLoveSpace() {
     const newNote = {
       id: Date.now().toString(),
       text: affirmationText || 'Click to edit...',
-      x: Math.random() * 300 + 50, // Random position
-      y: Math.random() * 200 + 50,
+      x: Math.random() * 200 + 20, // Random position within corkboard bounds
+      y: Math.random() * 150 + 20,
       color: selectedColor,
       rotation: Math.random() * 20 - 10, // Random rotation between -10 and 10 degrees
-      width: 200, // Default width
+      width: 240, // Default width
       height: 200, // Default height
-      fontSize: 14, // Default font size
+      fontSize: 17, // Default font size
       isEditing: false,
       style: selectedStyle
     }
-    setStickyNotes([...stickyNotes, newNote])
+    setCurrentStickyNotes(prev => [...prev, newNote])
     setShowCustomizeNote(false)
     setAffirmationText('')
     clearSuggestions()
@@ -503,11 +610,11 @@ export default function SelfLoveSpace() {
 
   // Start editing a note
   const startEditing = (noteId: string) => {
-    const note = stickyNotes.find(n => n.id === noteId)
+    const note = getCurrentStickyNotes().find(n => n.id === noteId)
     if (note) {
       setEditingNote(noteId)
       setEditingText(note.text === 'Click to edit...' ? '' : note.text)
-      setStickyNotes(prevNotes =>
+      setCurrentStickyNotes(prevNotes =>
         prevNotes.map(n =>
           n.id === noteId ? { ...n, isEditing: true } : n
         )
@@ -517,7 +624,7 @@ export default function SelfLoveSpace() {
 
   // Save editing changes
   const saveEditing = (noteId: string) => {
-    setStickyNotes(prevNotes =>
+    setCurrentStickyNotes(prevNotes =>
       prevNotes.map(note =>
         note.id === noteId
           ? { ...note, text: editingText || 'Click to edit...', isEditing: false }
@@ -530,7 +637,7 @@ export default function SelfLoveSpace() {
 
   // Cancel editing
   const cancelEditing = (noteId: string) => {
-    setStickyNotes(prevNotes =>
+    setCurrentStickyNotes(prevNotes =>
       prevNotes.map(note =>
         note.id === noteId ? { ...note, isEditing: false } : note
       )
@@ -541,41 +648,43 @@ export default function SelfLoveSpace() {
 
   // Update font size
   const updateFontSize = (noteId: string, newSize: number) => {
-    setStickyNotes(prevNotes =>
+    setCurrentStickyNotes(prevNotes =>
       prevNotes.map(note =>
-        note.id === noteId ? { ...note, fontSize: newSize } : note
+        note.id === noteId ? { ...note, fontSize: Math.min(48, Math.max(12, newSize)) } : note
       )
     )
   }
 
   const removeStickyNote = (id: string) => {
-    setStickyNotes(stickyNotes.filter(note => note.id !== id))
+    setCurrentStickyNotes(getCurrentStickyNotes().filter(note => note.id !== id))
+  }
+
+  const updateStickyNote = (id: string, updates: any) => {
+    setCurrentStickyNotes(prevNotes =>
+      prevNotes.map(note =>
+        note.id === id ? { ...note, ...updates } : note
+      )
+    )
   }
 
   // Sticker functions
   const addSticker = (stickerOption: { id: string; text: string; image: string; width: number; height: number }) => {
-    console.log('Adding sticker:', stickerOption)
     const newSticker = {
       id: `${stickerOption.id}-${Date.now()}`,
       text: stickerOption.text,
       image: stickerOption.image,
-      x: Math.random() * 200 + 50, // Random position
-      y: Math.random() * 200 + 50,
+      x: Math.random() * 200 + 20, // Random position within corkboard bounds
+      y: Math.random() * 150 + 20,
       width: stickerOption.width || 120,
       height: stickerOption.height || 80,
       rotation: 0 // No rotation for now
     }
-    console.log('New sticker created:', newSticker)
-    setStickers(prev => {
-      const newStickers = [...prev, newSticker]
-      console.log('All stickers now:', newStickers)
-      return newStickers
-    })
+    setCurrentStickers(prev => [...prev, newSticker])
     setShowStickerPopup(false)
   }
 
   const removeSticker = (id: string) => {
-    setStickers(prev => prev.filter(sticker => sticker.id !== id))
+    setCurrentStickers(prev => prev.filter(sticker => sticker.id !== id))
   }
 
   // Handle file upload for custom stickers
@@ -623,13 +732,25 @@ export default function SelfLoveSpace() {
   // Function to select an affirmation suggestion
   const selectAffirmation = (affirmation: string) => {
     setAffirmationText(affirmation)
-    setShowAffirmationSuggestions(false)
+    
+    // Add to used affirmations and generate new suggestions
+    setUsedAffirmations(prev => {
+      const updatedUsed = [...prev, affirmation]
+      
+      // Generate new suggestions excluding the selected one
+      const newSuggestions = generateAffirmations(debouncedText || '', updatedUsed)
+      setGeneratedAffirmations(newSuggestions)
+      setShowAffirmationSuggestions(true)
+      
+      return updatedUsed
+    })
   }
 
   // Function to clear suggestions
   const clearSuggestions = () => {
     setShowAffirmationSuggestions(false)
     setGeneratedAffirmations([])
+    setUsedAffirmations([])
   }
 
   // Drag functions for sticky notes
@@ -638,7 +759,7 @@ export default function SelfLoveSpace() {
     setDraggedNote(noteId)
     setHasDragged(false)
     
-    const note = stickyNotes.find(n => n.id === noteId)
+    const note = getCurrentStickyNotes().find(n => n.id === noteId)
     if (note) {
       const containerRef = mode === 'corkboard' ? corkboardRef.current : videoRef.current?.parentElement;
       const containerRect = containerRef?.getBoundingClientRect() || { left: 0, top: 0, width: 0, height: 0 };
@@ -676,7 +797,7 @@ export default function SelfLoveSpace() {
         const containerRect = containerRef?.getBoundingClientRect() || { left: 0, top: 0, width: 0, height: 0 };
         
         // Check if we're dragging a sticky note
-        const note = stickyNotes.find(n => n.id === draggedNote)
+        const note = getCurrentStickyNotes().find(n => n.id === draggedNote)
         
         if (note) {
           // Handle sticky note dragging
@@ -686,7 +807,7 @@ export default function SelfLoveSpace() {
           const newX = e.clientX - containerRect.left - dragOffset.x;
           const newY = e.clientY - containerRect.top - dragOffset.y;
           
-          setStickyNotes(prevNotes =>
+          setCurrentStickyNotes(prevNotes =>
             prevNotes.map(note =>
               note.id === draggedNote
                 ? {
@@ -718,7 +839,7 @@ export default function SelfLoveSpace() {
     setIsResizing(true)
     setDraggedNote(noteId) // Set the dragged note for resize
     
-    const note = stickyNotes.find(n => n.id === noteId)
+    const note = getCurrentStickyNotes().find(n => n.id === noteId)
     if (note) {
       setResizeStart({
         x: e.clientX,
@@ -737,7 +858,7 @@ export default function SelfLoveSpace() {
       const newWidth = Math.max(80, Math.min(300, resizeStart.width + deltaX))
       const newHeight = Math.max(80, Math.min(300, resizeStart.height + deltaY))
       
-      setStickyNotes(prevNotes =>
+      setCurrentStickyNotes(prevNotes =>
         prevNotes.map(note =>
           note.id === draggedNote
             ? { ...note, width: newWidth, height: newHeight }
@@ -751,7 +872,7 @@ export default function SelfLoveSpace() {
     e.preventDefault()
     e.stopPropagation()
     
-    const note = stickyNotes.find(n => n.id === noteId)
+    const note = getCurrentStickyNotes().find(n => n.id === noteId)
     if (!note) return
     
     setIsRotating(true)
@@ -765,7 +886,7 @@ export default function SelfLoveSpace() {
 
   const handleRotateMove = (e: React.MouseEvent) => {
     if (isRotating && draggedNote && rotateStart) {
-      const note = stickyNotes.find(n => n.id === draggedNote)
+      const note = getCurrentStickyNotes().find(n => n.id === draggedNote)
       if (!note) return
 
       const deltaX = e.clientX - rotateStart.x
@@ -776,7 +897,7 @@ export default function SelfLoveSpace() {
       const rotationSensitivity = 0.5 // Adjust this value to make rotation more/less sensitive
       const newRotation = rotateStart.angle + (deltaX * rotationSensitivity)
       
-      setStickyNotes(prevNotes =>
+      setCurrentStickyNotes(prevNotes =>
         prevNotes.map(n =>
           n.id === draggedNote
             ? { ...n, rotation: newRotation }
@@ -790,9 +911,9 @@ export default function SelfLoveSpace() {
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (isResizing) {
-        handleResizeMove(e as React.MouseEvent)
+        handleResizeMove(e as unknown as React.MouseEvent)
       } else if (isRotating) {
-        handleRotateMove(e as React.MouseEvent)
+        handleRotateMove(e as unknown as React.MouseEvent)
       } else if (draggedNote && dragStart) {
         // Calculate distance moved
         const deltaX = e.clientX - dragStart.x
@@ -807,7 +928,7 @@ export default function SelfLoveSpace() {
           const containerRect = containerRef?.getBoundingClientRect() || { left: 0, top: 0, width: 0, height: 0 };
           
           // Check if we're dragging a sticky note
-          const note = stickyNotes.find(n => n.id === draggedNote)
+          const note = getCurrentStickyNotes().find(n => n.id === draggedNote)
           
           if (note) {
             // Handle sticky note dragging
@@ -817,7 +938,7 @@ export default function SelfLoveSpace() {
             const newX = e.clientX - containerRect.left - dragOffset.x;
             const newY = e.clientY - containerRect.top - dragOffset.y;
             
-            setStickyNotes(prevNotes =>
+            setCurrentStickyNotes(prevNotes =>
               prevNotes.map(note =>
                 note.id === draggedNote
                   ? {
@@ -853,7 +974,7 @@ export default function SelfLoveSpace() {
       document.removeEventListener('mouseup', handleMouseUp)
       document.removeEventListener('mouseleave', handleMouseUp)
     }
-  }, [draggedNote, isResizing, isRotating, dragStart, hasDragged, resizeStart, rotateStart, stickyNotes, mode, dragOffset])
+  }, [draggedNote, isResizing, isRotating, dragStart, hasDragged, resizeStart, rotateStart, getCurrentStickyNotes, mode, dragOffset])
 
   // Cleanup on component unmount
   useEffect(() => {
@@ -869,8 +990,9 @@ export default function SelfLoveSpace() {
       <div className="space-y-6">
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold text-[#333333]">Self-Love Space</h1>
-          <p className="text-[#666666]">Your personal corkboard and mirror space</p>
+          <p className="text-[#666666]">A corner for self-love and affirmations.</p>
         </div>
+
 
         {/* Mode Selection */}
         <div className="flex justify-center gap-4">
@@ -906,177 +1028,7 @@ export default function SelfLoveSpace() {
           {mode === 'corkboard' ? (
             /* Corkboard Mode */
             <div className="space-y-4">
-              {/* Add Note Controls */}
-              <div className="flex flex-col items-center gap-4">
-                <div className="flex gap-4">
-                  <button
-                    onClick={() => setShowCustomizeNote(true)}
-                    className="px-6 py-3 bg-white/80 hover:bg-white/90 text-gray-700 font-semibold rounded-lg shadow-sm border border-gray-200 hover:border-gray-300 transition-all duration-200 flex items-center gap-2 backdrop-blur-sm"
-                  >
-                    <span className="text-lg">+</span>
-                    Create Blank Sticky Note
-                  </button>
-                  <button
-                    onClick={() => setShowStickerPopup(true)}
-                    className="px-6 py-3 bg-white/80 hover:bg-white/90 text-gray-700 font-semibold rounded-lg shadow-sm border border-gray-200 hover:border-gray-300 transition-all duration-200 flex items-center gap-2 backdrop-blur-sm"
-                  >
-                    <span className="text-lg">+</span>
-                    Add Stickers
-                  </button>
-                </div>
-        </div>
 
-              {/* Sticky Note Customization */}
-              {showCustomizeNote && (
-                <div className="mt-6 p-6 bg-white rounded-lg shadow-lg border-2 border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">Customize Your Sticky Note</h3>
-                  
-                  {/* Color Selection */}
-                  <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-3">Choose Color:</label>
-                    <div className="flex flex-wrap gap-3 justify-center">
-                      {[
-                        { name: 'Yellow', value: '#FFE066' },
-                        { name: 'Pink', value: '#FFB4A2' },
-                        { name: 'Mint', value: '#87C4BB' },
-                        { name: 'Lavender', value: '#C1A7E1' },
-                        { name: 'Peach', value: '#FFE4B5' },
-                        { name: 'Coral', value: '#FF7F7F' },
-                        { name: 'Sky Blue', value: '#87CEEB' },
-                        { name: 'Lime', value: '#98FB98' }
-                      ].map((color) => (
-                        <button
-                          key={color.value}
-                          onClick={() => setSelectedColor(color.value)}
-                          className={`w-12 h-12 rounded-full border-4 transition-all duration-200 ${
-                            selectedColor === color.value 
-                              ? 'border-gray-800 scale-110' 
-                              : 'border-gray-300 hover:scale-105'
-                          }`}
-                          style={{ backgroundColor: color.value }}
-                          title={color.name}
-                        />
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Style Selection */}
-                  <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-3">Choose Style:</label>
-                    <div className="grid grid-cols-2 gap-3">
-                      {[
-                        { 
-                          name: 'Classic', 
-                          value: 'default',
-                          preview: '📝',
-                          description: 'Simple and clean'
-                        },
-                        { 
-                          name: 'Pinned', 
-                          value: 'pinned',
-                          preview: '📌📝📌',
-                          description: 'With red pins'
-                        },
-                        { 
-                          name: 'Flower', 
-                          value: 'flower',
-                          preview: '🌸📝🌸',
-                          description: 'Floral pattern'
-                        },
-                        { 
-                          name: 'Star', 
-                          value: 'star',
-                          preview: '⭐📝⭐',
-                          description: 'Star decorations'
-                        }
-                      ].map((style) => (
-                        <button
-                          key={style.value}
-                          onClick={() => setSelectedStyle(style.value)}
-                          className={`p-4 rounded-lg border-2 transition-all duration-200 ${
-                            selectedStyle === style.value 
-                              ? 'border-[#FFB4A2] bg-[#FFB4A2] bg-opacity-20' 
-                              : 'border-gray-300 hover:border-gray-400'
-                          }`}
-                        >
-                          <div className="text-center">
-                            <div className="text-2xl mb-2">{style.preview}</div>
-                            <div className="font-medium text-sm text-gray-800">{style.name}</div>
-                            <div className="text-xs text-gray-600">{style.description}</div>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Affirmation Section */}
-                  <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-3">Add an Affirmation:</label>
-                    
-                    {/* Custom Affirmation Input */}
-                    <div className="mb-4">
-                      <textarea
-                        value={affirmationText}
-                        onChange={(e) => setAffirmationText(e.target.value)}
-                        placeholder="Write your own positive affirmation or describe how you're feeling..."
-                        className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-[#87C4BB] focus:border-transparent"
-                        rows={3}
-                      />
-                    </div>
-
-                    {/* AI-Generated Affirmation Suggestions */}
-                    {showAffirmationSuggestions && generatedAffirmations.length > 0 && (
-                      <div className="mb-4">
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-gray-700">AI Suggestions:</span>
-                            <span className="text-xs text-gray-500">Click to use</span>
-                          </div>
-                          <button
-                            onClick={clearSuggestions}
-                            className="text-gray-400 hover:text-gray-600 text-sm"
-                          >
-                            ✕
-                          </button>
-                        </div>
-                        <div className="space-y-2">
-                          {generatedAffirmations.map((affirmation, index) => (
-                            <button
-                              key={`${debouncedText}-${index}`}
-                              onClick={() => selectAffirmation(affirmation)}
-                              className="w-full p-3 text-left bg-gradient-to-r from-[#FFB4A2] to-[#FFC4B4] hover:from-[#FF9F8A] hover:to-[#FFB4A2] text-white rounded-lg transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md transform hover:scale-[1.02]"
-                            >
-                              <div className="flex items-start gap-2">
-                                <span className="text-lg">✨</span>
-                                <span className="flex-1">&quot;{affirmation}&quot;</span>
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex gap-3 justify-center">
-                    <button
-                      onClick={() => {
-                        setShowCustomizeNote(false)
-                        clearSuggestions()
-                      }}
-                      className="px-6 py-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium rounded-lg transition-colors duration-200"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={createStickyNote}
-                      className="px-6 py-2 bg-[#87C4BB] hover:bg-[#7AB3A8] text-white font-medium rounded-lg transition-colors duration-200"
-                    >
-                      Add to Corkboard
-                    </button>
-                  </div>
-                </div>
-              )}
 
               {/* Corkboard */}
               <div
@@ -1095,10 +1047,10 @@ export default function SelfLoveSpace() {
                 }}
               >
                 {/* Sticky Notes */}
-                {stickyNotes.map((note) => (
+                {getCurrentStickyNotes().map((note) => (
                   <div
                     key={note.id}
-                    className={`absolute p-3 transform transition-transform duration-200 flex flex-col ${
+                    className={`absolute p-3 transform transition-transform duration-200 flex flex-col group ${
                       draggedNote === note.id ? 'z-10 scale-105' : ''
                     } ${note.isEditing ? 'cursor-default' : 'cursor-move hover:scale-105'}`}
                     style={{
@@ -1134,110 +1086,142 @@ export default function SelfLoveSpace() {
                         <div className="absolute -bottom-1 right-1 text-yellow-400 text-base">⭐</div>
                       </>
                     )}
+
+                    {/* Note content */}
                     {note.isEditing ? (
-                      // Editing mode
                       <div className="flex-1 flex flex-col">
                         <textarea
+                          ref={textareaRef}
                           value={editingText}
                           onChange={(e) => setEditingText(e.target.value)}
-                          className="w-full flex-1 bg-transparent border-none outline-none resize-none text-gray-800 font-medium leading-tight"
-                          style={{ fontSize: `${note.fontSize}px` }}
+                          className="w-full flex-1 resize-none bg-transparent border-none outline-none text-sm"
+                          style={{ fontSize: note.fontSize }}
                           autoFocus
-                          placeholder="Type your note..."
+                          onBlur={() => {
+                            // Only save if slider is not active
+                            if (!isSliderActive) {
+                              saveEditing(note.id);
+                            }
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                              e.preventDefault()
+                              saveEditing(note.id)
+                            }
+                            if (e.key === 'Escape') {
+                              cancelEditing(note.id)
+                            }
+                          }}
                         />
                         
-                        {/* Editing controls */}
-                        <div className="flex items-center justify-between mt-2 px-1">
-                          <div className="flex items-center gap-1">
-                            <label className="text-xs text-gray-600">Size:</label>
-                            <input
-                              type="range"
-                              min="10"
-                              max="48"
-                              value={note.fontSize}
-                              onChange={(e) => updateFontSize(note.id, parseInt(e.target.value))}
-                              className="w-12 h-1 bg-gray-300 rounded-lg appearance-none cursor-pointer"
-                            />
-                            <span className="text-xs text-gray-600">{note.fontSize}px</span>
-                          </div>
-                          
-                          <div className="flex gap-1">
-                            <button
-                              onClick={() => saveEditing(note.id)}
-                              className="w-6 h-6 text-xs bg-green-500 text-white rounded hover:bg-green-600 flex items-center justify-center"
-                            >
-                              ✓
-                            </button>
-                            <button
-                              onClick={() => cancelEditing(note.id)}
-                              className="w-6 h-6 text-xs bg-gray-500 text-white rounded hover:bg-gray-600 flex items-center justify-center"
-                            >
-                              ✕
-                            </button>
-                          </div>
+                        {/* Font size slider */}
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="text-xs text-gray-600">A</span>
+                          <input
+                            type="range"
+                            min="12"
+                            max="48"
+                            value={note.fontSize}
+                            onChange={(e) => {
+                              e.stopPropagation();
+                              updateFontSize(note.id, parseInt(e.target.value));
+                            }}
+                            onMouseDown={(e) => {
+                              e.stopPropagation();
+                              setIsSliderActive(true);
+                              // Refocus textarea immediately
+                              setTimeout(() => {
+                                if (textareaRef.current) {
+                                  textareaRef.current.focus();
+                                }
+                              }, 0);
+                            }}
+                            onTouchStart={(e) => {
+                              e.stopPropagation();
+                              setIsSliderActive(true);
+                              // Refocus textarea immediately
+                              setTimeout(() => {
+                                if (textareaRef.current) {
+                                  textareaRef.current.focus();
+                                }
+                              }, 0);
+                            }}
+                            onMouseUp={() => {
+                              setIsSliderActive(false);
+                            }}
+                            onTouchEnd={() => {
+                              setIsSliderActive(false);
+                            }}
+                            className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                            style={{
+                              background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${((note.fontSize - 12) / (48 - 12)) * 100}%, #e5e7eb ${((note.fontSize - 12) / (48 - 12)) * 100}%, #e5e7eb 100%)`
+                            }}
+                          />
+                          <span className="text-xs text-gray-600 min-w-[30px] text-center">
+                            {note.fontSize}px
+                          </span>
                         </div>
                       </div>
                     ) : (
-                      // Display mode
-                      <>
+                      <div className="flex-1 flex flex-col">
                         <div 
-                          className="text-gray-800 font-medium leading-tight flex-1 overflow-hidden cursor-pointer"
-                          style={{ fontSize: `${note.fontSize}px` }}
+                          className="flex-1 cursor-pointer"
                           onClick={() => startEditing(note.id)}
+                          style={{ fontSize: note.fontSize }}
                         >
                           {note.text}
                         </div>
-                        <div 
-                          className="text-gray-600 mt-1 opacity-70 flex-shrink-0 text-xs"
-                        >
+                        <div className="text-xs text-gray-500 text-center mt-1 opacity-70">
                           Click to edit
                         </div>
+                      </div>
+                    )}
 
-                        {/* Resize handle */}
-                        <div
-                          className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize opacity-50 hover:opacity-100 transition-opacity"
-                          style={{
-                            background: 'linear-gradient(-45deg, transparent 0%, transparent 30%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.3) 100%)'
-                          }}
-                          onMouseDown={(e) => handleResizeStart(e, note.id)}
-                        />
-                        
-                        {/* Close button */}
-                        <div
-                          className="absolute -top-2 -left-2 w-6 h-6 cursor-pointer opacity-50 hover:opacity-100 transition-opacity flex items-center justify-center"
-                          style={{
-                            background: 'rgba(239, 68, 68, 0.9)',
-                            borderRadius: '50%',
-                            border: '2px solid rgba(239, 68, 68, 1)'
-                          }}
-                          onClick={(e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            removeStickyNote(note.id)
-                          }}
-                        >
-                          <div className="text-white text-xs font-bold">×</div>
+                    {/* Resize handle */}
+                    <div
+                      className="absolute -bottom-1 -right-1 w-4 h-4 cursor-se-resize opacity-50 hover:opacity-100 transition-opacity"
+                      style={{
+                        background: 'rgba(0,0,0,0.1)',
+                        borderRadius: '50%',
+                        border: '2px solid rgba(0,0,0,0.3)'
+                      }}
+                      onMouseDown={(e) => handleResizeStart(e, note.id)}
+                    />
+                    
+                    {/* Close button */}
+                    <div
+                      className="absolute -top-2 -left-2 w-6 h-6 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                      style={{
+                        background: 'rgba(239, 68, 68, 0.9)',
+                        borderRadius: '50%',
+                        border: '2px solid rgba(239, 68, 68, 1)'
+                      }}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        removeStickyNote(note.id)
+                      }}
+                    >
+                      <div className="text-white text-xs font-bold">×</div>
         </div>
 
-                        {/* Rotation handle */}
-                        <div
-                          className="absolute -top-2 -right-2 w-6 h-6 cursor-grab active:cursor-grabbing opacity-50 hover:opacity-100 transition-opacity flex items-center justify-center"
-                          style={{
-                            background: 'rgba(0,0,0,0.1)',
-                            borderRadius: '50%',
-                            border: '2px solid rgba(0,0,0,0.3)'
-                          }}
-                          onMouseDown={(e) => handleRotateStart(e, note.id)}
-                        >
-                          <div className="w-2 h-2 bg-gray-600 rounded-full"></div>
-                        </div>
-                      </>
-                    )}
+                    {/* Rotation handle */}
+                    <div
+                      className="absolute -top-2 -right-2 w-6 h-6 cursor-grab active:cursor-grabbing opacity-50 hover:opacity-100 transition-opacity flex items-center justify-center"
+                      style={{
+                        background: 'rgba(0,0,0,0.1)',
+                        borderRadius: '50%',
+                        border: '2px solid rgba(0,0,0,0.3)'
+                      }}
+                      onMouseDown={(e) => handleRotateStart(e, note.id)}
+                    >
+                      <div className="w-2 h-2 bg-gray-600 rounded-full"></div>
+                    </div>
                   </div>
                 ))}
 
                 {/* Stickers */}
-                {stickers.map((sticker) => (
+                {getCurrentStickers().map((sticker) => (
                   <motion.div
                     key={sticker.id}
                     data-sticker-id={sticker.id}
@@ -1253,63 +1237,40 @@ export default function SelfLoveSpace() {
                     drag
                     dragMomentum={false}
                     dragElastic={0}
-                    dragConstraints={{
-                      left: 0,
-                      right: containerDimensions.width - sticker.width,
-                      top: 0,
-                      bottom: containerDimensions.height - sticker.height
-                    }}
-                    initial={{ x: sticker.x, y: sticker.y }}
+                    dragConstraints={corkboardRef}
                     onDragStart={() => handleStickerDragStart(sticker.id)}
-                    onDragEnd={(event, info) => handleStickerDragEnd(sticker.id, event, info)}
-                    whileDrag={{ 
-                      scale: 1.05,
-                      zIndex: 50,
-                      cursor: 'grabbing'
-                    }}
+                    onDragEnd={(event: any, info: any) => handleStickerDragEnd(sticker.id, event, info)}
+                    whileDrag={{ scale: 1.05, zIndex: 50 }}
                   >
-                    <div className="relative h-full w-full">
-                      {/* Close button for stickers */}
-                      <button
-                        className="absolute -left-2 -top-2 z-20 rounded-full bg-rose-500 text-white px-2 text-xs cursor-pointer opacity-50 hover:opacity-100 transition-opacity"
-                        onMouseDown={(e) => {
-                          e.stopPropagation();
-                          e.preventDefault();
-                        }}
-                        onTouchStart={(e) => {
-                          e.stopPropagation();
-                          e.preventDefault();
-                        }}
-                        onClick={(e) => { 
-                          e.stopPropagation(); 
-                          e.preventDefault();
-                          // Only delete if not currently dragging
-                          if (!isDragging && draggedNote !== sticker.id) {
-                            removeSticker(sticker.id);
-                          }
-                        }}
-                        aria-label="Delete sticker"
-                      >
-                        ×
-                      </button>
-                      
-                      {/* Sticker image */}
-                      <img
-                        src={sticker.image}
-                        alt={sticker.text}
-                        className="block select-none rounded-md shadow pointer-events-auto w-full h-full object-contain"
-                        style={{ 
-                          userSelect: 'none',
-                          WebkitUserDrag: 'none'
-                        } as React.CSSProperties & { WebkitUserDrag?: string }}
-                        draggable={false}
-                      />
+                    <img
+                      src={sticker.image}
+                      alt={sticker.text}
+                      className="w-full h-full object-contain pointer-events-none select-none"
+                      style={{ WebkitUserDrag: 'none' } as React.CSSProperties}
+                      draggable={false}
+                    />
+                    
+                    {/* Close button for stickers */}
+                    <div
+                      className="absolute -top-2 -left-2 w-6 h-6 cursor-pointer opacity-50 hover:opacity-100 transition-opacity flex items-center justify-center"
+                      style={{
+                        background: 'rgba(239, 68, 68, 0.9)',
+                        borderRadius: '50%',
+                        border: '2px solid rgba(239, 68, 68, 1)'
+                      }}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        removeSticker(sticker.id)
+                      }}
+                    >
+                      <div className="text-white text-xs font-bold">×</div>
                     </div>
                   </motion.div>
                 ))}
 
                 {/* Default encouragement if no notes or stickers */}
-                {stickyNotes.length === 0 && stickers.length === 0 && (
+                {getCurrentStickyNotes().length === 0 && getCurrentStickers().length === 0 && (
               <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center text-amber-700">
                       <div className="text-4xl mb-2">📌</div>
@@ -1318,8 +1279,26 @@ export default function SelfLoveSpace() {
                   </div>
                 </div>
                 )}
+
+                {/* Add Buttons - Top Right */}
+                <div className="absolute top-4 right-4 flex gap-2">
+                  <button
+                    onClick={() => setShowCustomizeNote(true)}
+                    className="px-3 py-2 bg-white/90 hover:bg-white text-gray-700 font-medium rounded-lg shadow-md border border-gray-200 hover:border-gray-300 transition-all duration-200 flex items-center gap-2 backdrop-blur-sm text-sm"
+                  >
+                    <span className="text-lg">+</span>
+                    <span className="hidden sm:inline">Add custom sticky note</span>
+                  </button>
+                  <button
+                    onClick={() => setShowStickerPopup(true)}
+                    className="px-3 py-2 bg-white/90 hover:bg-white text-gray-700 font-medium rounded-lg shadow-md border border-gray-200 hover:border-gray-300 transition-all duration-200 flex items-center gap-2 backdrop-blur-sm text-sm"
+                  >
+                    <span className="text-lg">+</span>
+                    <span className="hidden sm:inline">Add sticker</span>
+                  </button>
               </div>
             </div>
+      </div>
           ) : (
             /* Mirror Mode */
             <div className="space-y-6">
@@ -1351,204 +1330,20 @@ export default function SelfLoveSpace() {
       </div>
               </div>
 
-              {/* Mirror Controls - Add Note Buttons */}
-              {isMirrorOn && (
-                <div className="flex flex-col items-center gap-4">
-                  <div className="flex gap-4">
-                    <button
-                      onClick={() => setShowCustomizeNote(true)}
-                      className="px-6 py-3 bg-white/80 hover:bg-white/90 text-gray-700 font-semibold rounded-lg shadow-sm border border-gray-200 hover:border-gray-300 transition-all duration-200 flex items-center gap-2 backdrop-blur-sm"
-                    >
-                      <span className="text-lg">+</span>
-                      Create Blank Sticky Note
-                    </button>
-                    <button
-                      onClick={() => setShowStickerPopup(true)}
-                      className="px-6 py-3 bg-white/80 hover:bg-white/90 text-gray-700 font-semibold rounded-lg shadow-sm border border-gray-200 hover:border-gray-300 transition-all duration-200 flex items-center gap-2 backdrop-blur-sm"
-                    >
-                      <span className="text-lg">+</span>
-                      Add Stickers
-                    </button>
-                  </div>
-                </div>
-              )}
 
-              {/* Video Container */}
-              <div className="aspect-[3/4] bg-gray-100 rounded-lg overflow-hidden border-2 border-gray-200 relative max-w-md mx-auto">
-                {/* Always render video element but hide when not active */}
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  playsInline
-                  muted
-                  className={`w-full h-full object-cover ${isMirrorOn ? 'block' : 'hidden'}`}
-                  style={{ transform: 'scaleX(-1)' }} // Mirror effect
-                />
-                
-                {/* Placeholder when mirror is off */}
-                {!isMirrorOn && (
-                  <div className="w-full h-full flex items-center justify-center absolute inset-0">
-                    <div className="text-center text-gray-500">
-                      <div className="w-16 h-20 bg-gray-300 rounded-lg mx-auto mb-4 flex items-center justify-center">
-                        <span className="text-2xl">📷</span>
-                      </div>
-                      <p>Click &quot;On&quot; to start mirror</p>
-                    </div>
-                  </div>
-                )}
-              </div>
+              {/* Mirror Board Component */}
+              <MirrorBoard 
+                onAddNote={() => setShowCustomizeNote(true)}
+                onAddSticker={() => setShowStickerPopup(true)}
+                stickers={getCurrentStickers()}
+                stickyNotes={getCurrentStickyNotes()}
+                onRemoveSticker={removeSticker}
+                onRemoveStickyNote={removeStickyNote}
+                onUpdateStickyNote={updateStickyNote}
+                videoRef={videoRef}
+                isMirrorOn={isMirrorOn}
+              />
 
-              {/* Sticky Note Customization for Mirror Mode */}
-              {showCustomizeNote && mode === 'mirror' && (
-                <div className="mt-6 p-6 bg-white rounded-lg shadow-lg border-2 border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">Customize Your Sticky Note</h3>
-                  
-                  {/* Color Selection */}
-                  <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-3">Choose Color:</label>
-                    <div className="flex flex-wrap gap-3 justify-center">
-                      {[
-                        { name: 'Yellow', value: '#FFE066' },
-                        { name: 'Pink', value: '#FFB4A2' },
-                        { name: 'Mint', value: '#87C4BB' },
-                        { name: 'Lavender', value: '#C1A7E1' },
-                        { name: 'Peach', value: '#FFE4B5' },
-                        { name: 'Coral', value: '#FF7F7F' },
-                        { name: 'Sky Blue', value: '#87CEEB' },
-                        { name: 'Lime', value: '#98FB98' }
-                      ].map((color) => (
-                        <button
-                          key={color.value}
-                          onClick={() => setSelectedColor(color.value)}
-                          className={`w-12 h-12 rounded-full border-4 transition-all duration-200 ${
-                            selectedColor === color.value 
-                              ? 'border-gray-800 scale-110' 
-                              : 'border-gray-300 hover:scale-105'
-                          }`}
-                          style={{ backgroundColor: color.value }}
-                          title={color.name}
-                        />
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Style Selection */}
-                  <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-3">Choose Style:</label>
-                    <div className="grid grid-cols-2 gap-3">
-                      {[
-                        { 
-                          name: 'Classic', 
-                          value: 'default',
-                          preview: '📝',
-                          description: 'Simple and clean'
-                        },
-                        { 
-                          name: 'Pinned', 
-                          value: 'pinned',
-                          preview: '📌📝📌',
-                          description: 'With red pins'
-                        },
-                        { 
-                          name: 'Flower', 
-                          value: 'flower',
-                          preview: '🌸📝🌸',
-                          description: 'Floral pattern'
-                        },
-                        { 
-                          name: 'Star', 
-                          value: 'star',
-                          preview: '⭐📝⭐',
-                          description: 'Star decorations'
-                        }
-                      ].map((style) => (
-                        <button
-                          key={style.value}
-                          onClick={() => setSelectedStyle(style.value)}
-                          className={`p-4 rounded-lg border-2 transition-all duration-200 ${
-                            selectedStyle === style.value 
-                              ? 'border-[#FFB4A2] bg-[#FFB4A2] bg-opacity-20' 
-                              : 'border-gray-300 hover:border-gray-400'
-                          }`}
-                        >
-                          <div className="text-center">
-                            <div className="text-2xl mb-2">{style.preview}</div>
-                            <div className="font-medium text-sm text-gray-800">{style.name}</div>
-                            <div className="text-xs text-gray-600">{style.description}</div>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Affirmation Section */}
-                  <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-3">Add an Affirmation:</label>
-                    
-                    {/* Custom Affirmation Input */}
-                    <div className="mb-4">
-                      <textarea
-                        value={affirmationText}
-                        onChange={(e) => setAffirmationText(e.target.value)}
-                        placeholder="Write your own positive affirmation or describe how you're feeling..."
-                        className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-[#87C4BB] focus:border-transparent"
-                        rows={3}
-                      />
-                    </div>
-
-                    {/* AI-Generated Affirmation Suggestions */}
-                    {showAffirmationSuggestions && generatedAffirmations.length > 0 && (
-                      <div className="mb-4">
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-gray-700">AI Suggestions:</span>
-                            <span className="text-xs text-gray-500">Click to use</span>
-                          </div>
-                          <button
-                            onClick={clearSuggestions}
-                            className="text-gray-400 hover:text-gray-600 text-sm"
-                          >
-                            ✕
-                          </button>
-                        </div>
-                        <div className="space-y-2">
-                          {generatedAffirmations.map((affirmation, index) => (
-                            <button
-                              key={`${debouncedText}-${index}`}
-                              onClick={() => selectAffirmation(affirmation)}
-                              className="w-full p-3 text-left bg-gradient-to-r from-[#FFB4A2] to-[#FFC4B4] hover:from-[#FF9F8A] hover:to-[#FFB4A2] text-white rounded-lg transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md transform hover:scale-[1.02]"
-                            >
-                              <div className="flex items-start gap-2">
-                                <span className="text-lg">✨</span>
-                                <span className="flex-1">&quot;{affirmation}&quot;</span>
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex gap-3 justify-center">
-                    <button
-                      onClick={() => {
-                        setShowCustomizeNote(false)
-                        clearSuggestions()
-                      }}
-                      className="px-6 py-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium rounded-lg transition-colors duration-200"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={createStickyNote}
-                      className="px-6 py-2 bg-[#87C4BB] hover:bg-[#7AB3A8] text-white font-medium rounded-lg transition-colors duration-200"
-                    >
-                      Add to Mirror
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
           )}
         </div>
@@ -1641,6 +1436,173 @@ export default function SelfLoveSpace() {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Sticky Note Customization Popup */}
+      {showCustomizeNote && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
+          <div className="bg-white rounded-lg p-6 w-[600px] h-[600px] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold text-gray-800">Customize Your Sticky Note</h2>
+              <button
+                onClick={() => {
+                  setShowCustomizeNote(false)
+                  clearSuggestions()
+                }}
+                className="text-gray-500 hover:text-gray-700 text-2xl"
+              >
+                ×
+              </button>
+            </div>
+            
+            {/* Color Selection */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-3">Choose Color:</label>
+              <div className="flex flex-wrap gap-3 justify-center">
+                {[
+                  { name: 'Yellow', value: '#FFE066' },
+                  { name: 'Pink', value: '#FFB4A2' },
+                  { name: 'Mint', value: '#87C4BB' },
+                  { name: 'Lavender', value: '#C1A7E1' },
+                  { name: 'Peach', value: '#FFE4B5' },
+                  { name: 'Coral', value: '#FF7F7F' },
+                  { name: 'Sky Blue', value: '#87CEEB' },
+                  { name: 'Lime', value: '#98FB98' }
+                ].map((color) => (
+                  <button
+                    key={color.value}
+                    onClick={() => setSelectedColor(color.value)}
+                    className={`w-12 h-12 rounded-full border-4 transition-all duration-200 ${
+                      selectedColor === color.value 
+                        ? 'border-gray-800 scale-110' 
+                        : 'border-gray-300 hover:scale-105'
+                    }`}
+                    style={{ backgroundColor: color.value }}
+                    title={color.name}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Style Selection */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-3">Choose Style:</label>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { 
+                    name: 'Classic', 
+                    value: 'default',
+                    preview: '📝',
+                    description: 'Simple and clean'
+                  },
+                  { 
+                    name: 'Pinned', 
+                    value: 'pinned',
+                    preview: '📌📝📌',
+                    description: 'With red pins'
+                  },
+                  { 
+                    name: 'Flower', 
+                    value: 'flower',
+                    preview: '🌸📝🌸',
+                    description: 'Floral pattern'
+                  },
+                  { 
+                    name: 'Star', 
+                    value: 'star',
+                    preview: '⭐📝⭐',
+                    description: 'Star decorations'
+                  }
+                ].map((style) => (
+                  <button
+                    key={style.value}
+                    onClick={() => setSelectedStyle(style.value)}
+                    className={`p-4 rounded-lg border-2 transition-all duration-200 ${
+                      selectedStyle === style.value 
+                        ? 'border-[#FFB4A2] bg-[#FFB4A2] bg-opacity-20' 
+                        : 'border-gray-300 hover:border-gray-400'
+                    }`}
+                  >
+                    <div className="text-center">
+                      <div className="text-2xl mb-2">{style.preview}</div>
+                      <div className="font-medium text-sm text-gray-800">{style.name}</div>
+                      <div className="text-xs text-gray-600">{style.description}</div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Affirmation Section */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-3">Add an Affirmation:</label>
+              
+              {/* Custom Affirmation Input */}
+              <div className="mb-4">
+                <textarea
+                  value={affirmationText}
+                  onChange={(e) => setAffirmationText(e.target.value)}
+                  placeholder="Write your own positive affirmation or describe how you're feeling..."
+                  className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-[#87C4BB] focus:border-transparent h-20"
+                  rows={3}
+                />
+              </div>
+
+              {/* AI-Generated Affirmation Suggestions - Fixed Height Container */}
+              <div className="mb-4 min-h-[120px] max-h-[200px] overflow-y-auto">
+                {showAffirmationSuggestions && generatedAffirmations.length > 0 && (
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-gray-700">AI Suggestions:</span>
+                        <span className="text-xs text-gray-500">Click to use</span>
+                      </div>
+                      <button
+                        onClick={clearSuggestions}
+                        className="text-gray-400 hover:text-gray-600 text-sm"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                    <div className="space-y-2">
+                      {generatedAffirmations.map((affirmation, index) => (
+                        <button
+                          key={`${debouncedText}-${index}`}
+                          onClick={() => selectAffirmation(affirmation)}
+                          className="w-full p-3 text-left bg-gradient-to-r from-[#FFB4A2] to-[#FFC4B4] hover:from-[#FF9F8A] hover:to-[#FFB4A2] text-white rounded-lg transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md transform hover:scale-[1.02]"
+                        >
+                          <div className="flex items-start gap-2">
+                            <span className="text-lg">✨</span>
+                            <span className="flex-1">&quot;{affirmation}&quot;</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={() => {
+                  setShowCustomizeNote(false)
+                  clearSuggestions()
+                }}
+                className="px-6 py-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium rounded-lg transition-colors duration-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={createStickyNote}
+                className="px-6 py-2 bg-[#87C4BB] hover:bg-[#7AB3A8] text-white font-medium rounded-lg transition-colors duration-200"
+              >
+                Add to {mode === 'mirror' ? 'Mirror' : 'Corkboard'}
+              </button>
+            </div>
           </div>
         </div>
       )}

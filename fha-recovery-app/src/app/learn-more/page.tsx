@@ -584,13 +584,13 @@ export default function LearnMore() {
             <Card className="border-[#87C4BB]/30 shadow-xl">
               <CardContent className="p-10">
                 <h2 className="text-4xl font-bold text-[#333333] mb-8">
-                  How Harmonia Supports Your Recovery
+                  How Pedal Supports Your Recovery
                 </h2>
                 <div className="space-y-6 text-lg">
                   <p className="text-[#666666] leading-relaxed">
                     <span className="font-semibold text-[#333333]">
                       Understanding HA is just the beginning.
-                    </span> Harmonia provides the tools and support you need to navigate your recovery journey with confidence and compassion.
+                    </span> Pedal provides the tools and support you need to navigate your recovery journey with confidence and compassion.
                   </p>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
@@ -629,7 +629,7 @@ export default function LearnMore() {
                       🌟 Recovery is possible, and you don't have to do it alone
                     </p>
                     <p className="text-[#666666] mb-4">
-                      Harmonia combines evidence-based tracking with compassionate support, 
+                      Pedal combines evidence-based tracking with compassionate support, 
                       creating a safe space where healing can happen naturally.
                     </p>
                   </div>

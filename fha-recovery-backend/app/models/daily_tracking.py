@@ -15,6 +15,7 @@ class DailyTracking(Base):
     # Core BBT and Health Metrics
     body_temperature = Column(Float, nullable=True)  # Basal body temperature (°F)
     heart_rate_variability = Column(Float, nullable=True)  # HRV in milliseconds
+    total_calories = Column(Integer, nullable=True, default=0)  # Total calorie intake from logged meals
     calorie_deficit = Column(Integer, nullable=True)  # Calorie deficit (expenditure - intake)
     
     # Menstrual Cycle Tracking - Removed for FHA users

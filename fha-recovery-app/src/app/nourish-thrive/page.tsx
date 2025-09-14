@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useSession } from 'next-auth/react'
 import PageLayout from '@/components/layout/PageLayout'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -64,6 +65,7 @@ interface MealData {
 }
 
 export default function NourishThrive() {
+  const { data: session } = useSession()
   // Demo state for energy level - can be connected to actual data later
   const [energyLevel, setEnergyLevel] = useState(75)
   const [loggedMeals, setLoggedMeals] = useState<MealData[]>([])
@@ -129,6 +131,22 @@ export default function NourishThrive() {
         
         // Extract calorie count from AI analysis
         const calorieCount = extractCaloriesFromAnalysis(analysis)
+        
+        // Update daily calorie tracking
+        if (calorieCount > 0 && session?.user?.email) {
+          try {
+            const today = new Date().toISOString().split('T')[0]
+            await fetch(`http://localhost:8001/api/daily-tracking/date/${today}/calories?calories_to_add=${calorieCount}&user_id=${encodeURIComponent(session.user.email)}`, {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            })
+            console.log(`Added ${calorieCount} calories to daily tracking`)
+          } catch (error) {
+            console.error('Error updating daily calorie tracking:', error)
+          }
+        }
         
         // Update meal with full analysis data and calorie count
         setLoggedMeals(prev => 

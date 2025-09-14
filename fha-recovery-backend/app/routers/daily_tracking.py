@@ -18,6 +18,42 @@ from app.schemas.daily_tracking import (
 router = APIRouter(prefix="/api/daily-tracking", tags=["daily-tracking"])
 
 
+@router.patch("/date/{tracking_date}/calories", response_model=DailyTrackingResponse)
+def update_daily_calories(
+    tracking_date: date,
+    calories_to_add: int = Query(..., description="Calories to add to today's total"),
+    user_id: str = Query(..., description="User identifier"),
+    db: Session = Depends(get_db)
+):
+    """Add calories to today's total calorie intake"""
+    
+    # Get or create today's tracking entry
+    tracking_entry = db.query(DailyTracking).filter(
+        and_(
+            DailyTracking.user_id == user_id,
+            DailyTracking.tracking_date == tracking_date
+        )
+    ).first()
+    
+    if not tracking_entry:
+        # Create new entry for today
+        tracking_entry = DailyTracking(
+            user_id=user_id,
+            tracking_date=tracking_date,
+            total_calories=calories_to_add
+        )
+        db.add(tracking_entry)
+    else:
+        # Update existing entry
+        current_calories = tracking_entry.total_calories or 0
+        tracking_entry.total_calories = current_calories + calories_to_add
+    
+    db.commit()
+    db.refresh(tracking_entry)
+    
+    return tracking_entry
+
+
 @router.post("/", response_model=DailyTrackingResponse)
 def create_daily_tracking(
     tracking_data: DailyTrackingCreate,

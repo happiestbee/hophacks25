@@ -40,8 +40,7 @@ export default function InsightPage() {
   const [formData, setFormData] = useState({
     bodyTemperature: '',
     heartRateVariability: '',
-    caloriesExpended: '',
-    caloriesIntake: ''
+    caloriesExpended: ''
   })
   const [periodPrediction, setPeriodPrediction] = useState<PeriodPrediction | null>(null)
   const [predictionLoading, setPredictionLoading] = useState(false)
@@ -175,9 +174,22 @@ export default function InsightPage() {
       // Debug: Log form data
       console.log('Form data before processing:', formData)
       
+      // Get today's calorie intake from daily tracking
+      let calorieIntake = 0
+      try {
+        const intakeResponse = await fetch(`http://localhost:8001/api/daily-tracking/today?user_id=${encodeURIComponent(userId)}`)
+        if (intakeResponse.ok) {
+          const dailyData = await intakeResponse.json()
+          calorieIntake = dailyData.total_calories || 0
+          console.log(`Retrieved calorie intake: ${calorieIntake}`)
+        }
+      } catch (error) {
+        console.error('Error fetching calorie intake:', error)
+      }
+      
       // Calculate calorie deficit (expenditure - intake)
-      const calorieDeficit = formData.caloriesExpended && formData.caloriesIntake 
-        ? parseInt(formData.caloriesExpended) - parseInt(formData.caloriesIntake)
+      const calorieDeficit = formData.caloriesExpended 
+        ? parseInt(formData.caloriesExpended) - calorieIntake
         : null
 
       const requestBody = {
@@ -201,7 +213,7 @@ export default function InsightPage() {
       if (response.ok) {
         console.log('Health metrics saved successfully')
         setIsModalOpen(false)
-        setFormData({ bodyTemperature: '', heartRateVariability: '', caloriesExpended: '', caloriesIntake: '' })
+        setFormData({ bodyTemperature: '', heartRateVariability: '', caloriesExpended: '' })
         fetchTemperatureData() // Refresh the temperature graph data
       } else {
         const errorText = await response.text()
@@ -269,17 +281,6 @@ export default function InsightPage() {
                         placeholder="2200"
                         value={formData.caloriesExpended}
                         onChange={(e) => handleInputChange('caloriesExpended', e.target.value)}
-                        className="focus:ring-[#87C4BB]"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="calories-intake" className="text-[#666666]">Calories Intake</Label>
-                      <Input
-                        id="calories-intake"
-                        type="number"
-                        placeholder="1800"
-                        value={formData.caloriesIntake}
-                        onChange={(e) => handleInputChange('caloriesIntake', e.target.value)}
                         className="focus:ring-[#87C4BB]"
                       />
                     </div>

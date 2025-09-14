@@ -17,6 +17,7 @@ class DailyTrackingBase(BaseModel):
     # Core BBT and Health Metrics
     body_temperature: Optional[float] = Field(None, ge=95.0, le=105.0, description="Basal body temperature in °F")
     heart_rate_variability: Optional[float] = Field(None, ge=0.0, le=200.0, description="Heart rate variability in milliseconds")
+    total_calories: Optional[int] = Field(None, ge=0, le=5000, description="Total calorie intake from logged meals")
     calorie_deficit: Optional[int] = Field(None, ge=-2000, le=2000, description="Calorie deficit (expenditure - intake)")
     
     # Menstrual Cycle Tracking - Removed for FHA users
@@ -37,6 +38,7 @@ class DailyTrackingUpdate(BaseModel):
     # Core BBT and Health Metrics
     body_temperature: Optional[float] = Field(None, ge=95.0, le=105.0)
     heart_rate_variability: Optional[float] = Field(None, ge=0.0, le=200.0)
+    total_calories: Optional[int] = Field(None, ge=0, le=5000)
     calorie_deficit: Optional[int] = Field(None, ge=-2000, le=2000)
     
     # Optional Notes
@@ -60,6 +62,7 @@ class DailyTrackingSummary(BaseModel):
     tracking_date: date
     body_temperature: Optional[float]
     heart_rate_variability: Optional[float]
+    total_calories: Optional[int]
     calorie_deficit: Optional[int]
     
     class Config:
@@ -74,6 +77,7 @@ class WeeklyTrackingSummary(BaseModel):
     daily_summaries: list[DailyTrackingSummary]
     average_body_temperature: Optional[float]
     average_hrv: Optional[float]
+    average_total_calories: Optional[float]
     average_calorie_deficit: Optional[float]
     total_days: int
     
@@ -85,5 +89,6 @@ class HealthMetricsUpdateRequest(BaseModel):
     """Schema for updating health metrics"""
     body_temperature: Optional[float] = Field(None, ge=95.0, le=105.0)
     heart_rate_variability: Optional[float] = Field(None, ge=0.0, le=200.0)
+    total_calories: Optional[int] = Field(None, ge=0, le=5000)
     calorie_deficit: Optional[int] = Field(None, ge=-2000, le=2000)
     daily_notes: Optional[str] = Field(None, max_length=1000, description="Free-form notes for the day")

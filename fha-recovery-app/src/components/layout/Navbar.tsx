@@ -52,7 +52,7 @@ export default function Navbar() {
                   : 'text-[#666666] hover:text-[#FFB4A2]'
               }`}
             >
-              Self-Love Space
+              Safe Space
             </Link>
             <Link 
               href="/learn-more" 

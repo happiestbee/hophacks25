@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Heart, Activity, Scale, Brain, Dna, Moon, ChevronDown, ChevronUp, Stethoscope, FileText, Users, Building2, BookOpen, UserCheck, HeartHandshake, Shield, Utensils } from 'lucide-react'
 import { useState } from 'react'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
+import HASupportChatbot from '@/components/ui/ha-support-chatbot'
 
 export default function LearnMore() {
   const [openFAQ, setOpenFAQ] = useState<number | null>(null)
@@ -809,6 +810,8 @@ export default function LearnMore() {
         </div>
       </section>
 
+      {/* HA Support Chatbot - Only on Learn More page */}
+      <HASupportChatbot />
       </div>
   )
 }

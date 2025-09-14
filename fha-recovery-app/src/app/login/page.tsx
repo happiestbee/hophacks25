@@ -29,7 +29,7 @@ export default function LoginPage() {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-2">
             <Leaf className="w-6 h-6 text-[#FFB4A2]" />
-            <h1 className="text-2xl font-semibold text-gray-800">Harmonia Login</h1>
+            <h1 className="text-2xl font-semibold text-gray-800">Pedal Login</h1>
           </div>
         </div>
 

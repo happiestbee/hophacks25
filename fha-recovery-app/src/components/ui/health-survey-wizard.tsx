@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ChevronLeft, ChevronRight, Heart, Sparkles, LogIn } from 'lucide-react';
 
 interface SurveyData {
-  lastMenstrualPeriod: string;
+  daysSinceLastPeriod: string;
   allergies: string;
   dietaryRestrictions: string;
   currentMedications: string;
@@ -53,7 +53,7 @@ export function HealthSurveyWizard() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [surveyData, setSurveyData] = useState<SurveyData>({
-    lastMenstrualPeriod: '',
+    daysSinceLastPeriod: '',
     allergies: '',
     dietaryRestrictions: '',
     currentMedications: '',
@@ -79,7 +79,7 @@ export function HealthSurveyWizard() {
       if (response.ok) {
         const profile = await response.json();
         setSurveyData({
-          lastMenstrualPeriod: profile.last_menstrual_period || '',
+          daysSinceLastPeriod: profile.days_since_last_period ? profile.days_since_last_period.toString() : '',
           allergies: profile.allergies || '',
           dietaryRestrictions: profile.dietary_restrictions || '',
           currentMedications: profile.current_medications || '',
@@ -125,7 +125,7 @@ export function HealthSurveyWizard() {
         },
         body: JSON.stringify({
           user_id: userId,
-          last_menstrual_period: surveyData.lastMenstrualPeriod,
+          days_since_last_period: surveyData.daysSinceLastPeriod ? parseInt(surveyData.daysSinceLastPeriod) : null,
           allergies: surveyData.allergies,
           dietary_restrictions: surveyData.dietaryRestrictions,
           current_medications: surveyData.currentMedications,
@@ -136,7 +136,7 @@ export function HealthSurveyWizard() {
 
       if (response.ok) {
         // Redirect to BBT tracker page
-        router.push('/bbt-tracker');
+        router.push('/insight');
       } else {
         console.error('Failed to save survey data');
       }
@@ -224,19 +224,25 @@ export function HealthSurveyWizard() {
         return (
           <div className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="menstrual-period" className="text-base font-medium text-gray-700">
-                To help track your progress, what was the approximate date or time since your last menstrual period?
+              <Label htmlFor="days-since-period" className="text-base font-medium text-gray-700">
+                How many days has it been since your last menstrual period?
               </Label>
               <p className="text-sm text-gray-500 mb-4">
-                You can share whatever feels comfortable - for example: "January 15th, 2025", "about 6 months ago", or "I prefer not to say"
+                Enter the number of days since your last period started. If you're unsure or prefer not to share, you can leave this blank.
               </p>
-              <Textarea
-                id="menstrual-period"
-                placeholder="Share what feels right for you..."
-                value={surveyData.lastMenstrualPeriod}
-                onChange={(e) => updateSurveyData('lastMenstrualPeriod', e.target.value)}
-                className="min-h-[100px] border-gray-200 focus:border-[#87C4BB] focus:ring-[#87C4BB]"
+              <Input
+                id="days-since-period"
+                type="number"
+                min="0"
+                max="3650"
+                placeholder="e.g., 28, 90, 365..."
+                value={surveyData.daysSinceLastPeriod}
+                onChange={(e) => updateSurveyData('daysSinceLastPeriod', e.target.value)}
+                className="border-gray-200 focus:border-[#87C4BB] focus:ring-[#87C4BB]"
               />
+              <p className="text-xs text-gray-400 mt-2">
+                This helps us provide more personalized insights for your wellness journey.
+              </p>
             </div>
           </div>
         );

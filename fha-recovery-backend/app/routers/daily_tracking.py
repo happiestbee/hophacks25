@@ -12,8 +12,7 @@ from app.schemas.daily_tracking import (
     DailyTrackingResponse,
     DailyTrackingSummary,
     WeeklyTrackingSummary,
-    CalorieUpdateRequest,
-    TemperatureUpdateRequest
+    HealthMetricsUpdateRequest
 )
 
 router = APIRouter(prefix="/api/daily-tracking", tags=["daily-tracking"])
@@ -51,7 +50,7 @@ def create_daily_tracking(
     db.commit()
     db.refresh(db_tracking)
     
-    return _add_computed_properties(db_tracking)
+    return db_tracking
 
 
 @router.get("/", response_model=List[DailyTrackingResponse])
@@ -73,7 +72,7 @@ def get_daily_tracking_entries(
     
     entries = query.order_by(desc(DailyTracking.tracking_date)).limit(limit).all()
     
-    return [_add_computed_properties(entry) for entry in entries]
+    return entries
 
 
 @router.get("/date/{tracking_date}", response_model=DailyTrackingResponse)
@@ -97,7 +96,7 @@ def get_daily_tracking_by_date(
             detail=f"No tracking data found for {tracking_date}"
         )
     
-    return _add_computed_properties(entry)
+    return entry
 
 
 @router.put("/date/{tracking_date}", response_model=DailyTrackingResponse)
@@ -127,31 +126,20 @@ def update_daily_tracking(
     for field, value in update_data.items():
         setattr(entry, field, value)
     
-    # Auto-calculate total calories if meal calories are provided
-    if any(field.startswith('calories_from_') for field in update_data.keys()):
-        meal_calories = [
-            entry.calories_from_breakfast or 0,
-            entry.calories_from_lunch or 0,
-            entry.calories_from_dinner or 0,
-            entry.calories_from_snacks or 0
-        ]
-        if sum(meal_calories) > 0:
-            entry.total_calories = sum(meal_calories)
-    
     db.commit()
     db.refresh(entry)
     
-    return _add_computed_properties(entry)
+    return entry
 
 
-@router.patch("/date/{tracking_date}/calories", response_model=DailyTrackingResponse)
-def update_calories(
+@router.patch("/date/{tracking_date}/health-metrics", response_model=DailyTrackingResponse)
+def update_health_metrics(
     tracking_date: date,
-    calorie_data: CalorieUpdateRequest,
+    health_data: HealthMetricsUpdateRequest,
     user_id: str = Query(..., description="User identifier"),
     db: Session = Depends(get_db)
 ):
-    """Update just the calorie information for a specific date"""
+    """Update health metrics (temperature, HRV, calories expended) for a specific date"""
     
     entry = db.query(DailyTracking).filter(
         and_(
@@ -164,67 +152,19 @@ def update_calories(
         # Create new entry if it doesn't exist
         entry = DailyTracking(
             user_id=user_id,
-            tracking_date=tracking_date,
-            target_calories=2500
+            tracking_date=tracking_date
         )
         db.add(entry)
     
-    # Update calorie fields
-    update_data = calorie_data.dict(exclude_unset=True)
-    for field, value in update_data.items():
-        setattr(entry, field, value)
-    
-    # Auto-calculate total if not provided but meal calories are
-    if 'total_calories' not in update_data:
-        meal_calories = [
-            entry.calories_from_breakfast or 0,
-            entry.calories_from_lunch or 0,
-            entry.calories_from_dinner or 0,
-            entry.calories_from_snacks or 0
-        ]
-        if sum(meal_calories) > 0:
-            entry.total_calories = sum(meal_calories)
-    
-    db.commit()
-    db.refresh(entry)
-    
-    return _add_computed_properties(entry)
-
-
-@router.patch("/date/{tracking_date}/temperature", response_model=DailyTrackingResponse)
-def update_temperature(
-    tracking_date: date,
-    temp_data: TemperatureUpdateRequest,
-    user_id: str = Query(..., description="User identifier"),
-    db: Session = Depends(get_db)
-):
-    """Update just the temperature information for a specific date"""
-    
-    entry = db.query(DailyTracking).filter(
-        and_(
-            DailyTracking.user_id == user_id,
-            DailyTracking.tracking_date == tracking_date
-        )
-    ).first()
-    
-    if not entry:
-        # Create new entry if it doesn't exist
-        entry = DailyTracking(
-            user_id=user_id,
-            tracking_date=tracking_date,
-            target_calories=2500
-        )
-        db.add(entry)
-    
-    # Update temperature fields
-    update_data = temp_data.dict(exclude_unset=True)
+    # Update health metric fields
+    update_data = health_data.dict(exclude_unset=True)
     for field, value in update_data.items():
         setattr(entry, field, value)
     
     db.commit()
     db.refresh(entry)
     
-    return _add_computed_properties(entry)
+    return entry
 
 
 @router.get("/summary", response_model=List[DailyTrackingSummary])
@@ -251,14 +191,9 @@ def get_daily_summaries(
         summary = DailyTrackingSummary(
             user_id=entry.user_id,
             tracking_date=entry.tracking_date,
-            total_calories=entry.total_calories,
-            target_calories=entry.target_calories,
-            calorie_progress_percentage=entry.calorie_progress_percentage,
-            remaining_calories=entry.remaining_calories,
-            energy_level=entry.energy_level,
-            mood_rating=entry.mood_rating,
-            morning_temp=entry.morning_temp,
-            is_complete=entry.is_complete
+            body_temperature=entry.body_temperature,
+            heart_rate_variability=entry.heart_rate_variability,
+            calorie_deficit=entry.calorie_deficit
         )
         summaries.append(summary)
     
@@ -289,33 +224,25 @@ def get_weekly_summary(
         summary = DailyTrackingSummary(
             user_id=entry.user_id,
             tracking_date=entry.tracking_date,
-            total_calories=entry.total_calories,
-            target_calories=entry.target_calories,
-            calorie_progress_percentage=entry.calorie_progress_percentage,
-            remaining_calories=entry.remaining_calories,
-            energy_level=entry.energy_level,
-            mood_rating=entry.mood_rating,
-            morning_temp=entry.morning_temp,
-            is_complete=entry.is_complete
+            body_temperature=entry.body_temperature,
+            heart_rate_variability=entry.heart_rate_variability,
+            calorie_deficit=entry.calorie_deficit
         )
         daily_summaries.append(summary)
     
     # Calculate averages
-    calories = [e.total_calories for e in entries if e.total_calories is not None]
-    energy_levels = [e.energy_level for e in entries if e.energy_level is not None]
-    mood_ratings = [e.mood_rating for e in entries if e.mood_rating is not None]
-    morning_temps = [e.morning_temp for e in entries if e.morning_temp is not None]
+    body_temps = [e.body_temperature for e in entries if e.body_temperature is not None]
+    hrv_values = [e.heart_rate_variability for e in entries if e.heart_rate_variability is not None]
+    calorie_deficits = [e.calorie_deficit for e in entries if e.calorie_deficit is not None]
     
     return WeeklyTrackingSummary(
         user_id=user_id,
         week_start_date=week_start,
         week_end_date=week_end,
         daily_summaries=daily_summaries,
-        average_calories=sum(calories) / len(calories) if calories else None,
-        average_energy=sum(energy_levels) / len(energy_levels) if energy_levels else None,
-        average_mood=sum(mood_ratings) / len(mood_ratings) if mood_ratings else None,
-        average_morning_temp=sum(morning_temps) / len(morning_temps) if morning_temps else None,
-        days_with_complete_data=len([e for e in entries if e.is_complete]),
+        average_body_temperature=sum(body_temps) / len(body_temps) if body_temps else None,
+        average_hrv=sum(hrv_values) / len(hrv_values) if hrv_values else None,
+        average_calorie_deficit=sum(calorie_deficits) / len(calorie_deficits) if calorie_deficits else None,
         total_days=len(entries)
     )
 
@@ -366,14 +293,13 @@ def get_today_tracking(
         # Create a new entry for today with default values
         entry = DailyTracking(
             user_id=user_id,
-            tracking_date=today,
-            target_calories=2500
+            tracking_date=today
         )
         db.add(entry)
         db.commit()
         db.refresh(entry)
     
-    return _add_computed_properties(entry)
+    return entry
 
 
 @router.get("/admin/all-tracking")
@@ -389,23 +315,10 @@ def get_all_tracking_data(db: Session = Depends(get_db)):
                 "id": entry.id,
                 "user_id": entry.user_id,
                 "tracking_date": entry.tracking_date.isoformat(),
-                "total_calories": entry.total_calories,
-                "target_calories": entry.target_calories,
-                "calories_from_breakfast": entry.calories_from_breakfast,
-                "calories_from_lunch": entry.calories_from_lunch,
-                "calories_from_dinner": entry.calories_from_dinner,
-                "calories_from_snacks": entry.calories_from_snacks,
-                "morning_temp": entry.morning_temp,
-                "evening_temp": entry.evening_temp,
-                "energy_level": entry.energy_level,
-                "mood_rating": entry.mood_rating,
-                "sleep_hours": entry.sleep_hours,
-                "exercise_minutes": entry.exercise_minutes,
-                "water_glasses": entry.water_glasses,
-                "stress_level": entry.stress_level,
-                "is_complete": entry.is_complete,
-                "calorie_progress_percentage": entry.calorie_progress_percentage,
-                "remaining_calories": entry.remaining_calories,
+                "body_temperature": entry.body_temperature,
+                "heart_rate_variability": entry.heart_rate_variability,
+                "calorie_deficit": entry.calorie_deficit,
+                "daily_notes": entry.daily_notes,
                 "created_at": entry.created_at,
                 "updated_at": entry.updated_at
             }
@@ -431,44 +344,3 @@ def clear_all_tracking_data(db: Session = Depends(get_db)):
     }
 
 
-def _add_computed_properties(entry: DailyTracking) -> DailyTrackingResponse:
-    """Add computed properties to a DailyTracking entry"""
-    entry_dict = {
-        "id": entry.id,
-        "user_id": entry.user_id,
-        "tracking_date": entry.tracking_date,
-        "morning_temp": entry.morning_temp,
-        "evening_temp": entry.evening_temp,
-        "temp_notes": entry.temp_notes,
-        "total_calories": entry.total_calories,
-        "target_calories": entry.target_calories,
-        "calories_from_breakfast": entry.calories_from_breakfast,
-        "calories_from_lunch": entry.calories_from_lunch,
-        "calories_from_dinner": entry.calories_from_dinner,
-        "calories_from_snacks": entry.calories_from_snacks,
-        "energy_level": entry.energy_level,
-        "mood_rating": entry.mood_rating,
-        "sleep_hours": entry.sleep_hours,
-        "sleep_quality": entry.sleep_quality,
-        "menstrual_flow": entry.menstrual_flow,
-        "cramps_severity": entry.cramps_severity,
-        "bloating": entry.bloating,
-        "headaches": entry.headaches,
-        "breast_tenderness": entry.breast_tenderness,
-        "exercise_minutes": entry.exercise_minutes,
-        "exercise_type": entry.exercise_type,
-        "steps_count": entry.steps_count,
-        "water_glasses": entry.water_glasses,
-        "stress_level": entry.stress_level,
-        "anxiety_level": entry.anxiety_level,
-        "medications_taken": entry.medications_taken,
-        "supplements_taken": entry.supplements_taken,
-        "daily_notes": entry.daily_notes,
-        "is_complete": entry.is_complete,
-        "created_at": entry.created_at,
-        "updated_at": entry.updated_at,
-        "calorie_progress_percentage": entry.calorie_progress_percentage,
-        "remaining_calories": entry.remaining_calories
-    }
-    
-    return DailyTrackingResponse(**entry_dict)

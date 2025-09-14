@@ -39,7 +39,7 @@ export function UserFlowHandler() {
         } else {
           // If user has completed survey and is on landing page, redirect to BBT tracker
           if (pathname === '/') {
-            router.push('/bbt-tracker');
+            router.push('/insight');
           }
         }
       } else {

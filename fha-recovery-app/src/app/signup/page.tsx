@@ -32,7 +32,7 @@ export default function SignupPage() {
             <Leaf className="w-6 h-6 text-[#FFB4A2]" />
             <h1 className="text-2xl font-semibold text-gray-800">Create Account</h1>
           </div>
-          <p className="text-sm text-gray-500">Join Harmonia to start your journey</p>
+          <p className="text-sm text-gray-500">Join Pedal to start your journey</p>
         </div>
 
         {/* Signup Form */}

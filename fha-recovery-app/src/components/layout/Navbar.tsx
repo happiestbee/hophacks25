@@ -18,23 +18,21 @@ export default function Navbar() {
         <div className="flex items-center justify-between">
           {/* App Branding - Left Section */}
           <div className="flex items-center gap-2 mr-auto">
-            <Link href="/" className="flex items-center gap-2">
-              <Leaf className="text-[#FFB4A2] text-xl" />
-              <span className="text-[#333333] font-semibold text-lg">Harmonia</span>
-            </Link>
+            <Leaf className="text-[#FFB4A2] text-xl" />
+            <span className="text-[#333333] font-semibold text-lg">Pedal</span>
           </div>
           
           {/* Primary Navigation Links - Center Section */}
           <div className="flex items-center gap-x-6">
             <Link 
-              href="/bbt-tracker" 
+              href="/insight" 
               className={`font-medium px-4 py-1.5 rounded-full transition-colors ${
-                isActive('/bbt-tracker')
+                isActive('/insight')
                   ? 'bg-[#FFB4A2] text-white'
                   : 'text-[#666666] hover:text-[#FFB4A2]'
               }`}
             >
-              BBT Tracker
+              Insight
             </Link>
             <Link 
               href="/nourish-thrive" 
@@ -76,7 +74,7 @@ export default function Navbar() {
                   {session.user?.name || session.user?.email}
                 </span>
                 <button
-                  onClick={() => signOut()}
+                  onClick={() => signOut({ callbackUrl: '/' })}
                   className="flex items-center gap-1 text-[#666666] hover:text-[#FFB4A2] transition-colors"
                 >
                   <LogOut className="w-4 h-4" />

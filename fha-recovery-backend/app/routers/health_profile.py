@@ -34,7 +34,7 @@ async def create_health_profile(
     # Create new health profile
     db_profile = HealthProfile(
         user_id=profile_data.user_id,
-        last_menstrual_period=profile_data.last_menstrual_period,
+        days_since_last_period=profile_data.days_since_last_period,
         allergies=profile_data.allergies,
         dietary_restrictions=profile_data.dietary_restrictions,
         current_medications=profile_data.current_medications,
@@ -113,7 +113,7 @@ async def complete_survey(
     
     if profile:
         # Update existing profile
-        profile.last_menstrual_period = survey_data.last_menstrual_period
+        profile.days_since_last_period = survey_data.days_since_last_period
         profile.allergies = survey_data.allergies
         profile.dietary_restrictions = survey_data.dietary_restrictions
         profile.current_medications = survey_data.current_medications
@@ -124,7 +124,7 @@ async def complete_survey(
         # Create new profile
         profile = HealthProfile(
             user_id=survey_data.user_id,
-            last_menstrual_period=survey_data.last_menstrual_period,
+            days_since_last_period=survey_data.days_since_last_period,
             allergies=survey_data.allergies,
             dietary_restrictions=survey_data.dietary_restrictions,
             current_medications=survey_data.current_medications,
@@ -194,7 +194,7 @@ async def get_all_profiles(db: Session = Depends(get_db)):
                 "id": profile.id,
                 "user_id": profile.user_id,
                 "survey_completed": profile.survey_completed,
-                "last_menstrual_period": profile.last_menstrual_period,
+                "days_since_last_period": profile.days_since_last_period,
                 "allergies": profile.allergies,
                 "dietary_restrictions": profile.dietary_restrictions,
                 "current_medications": profile.current_medications,
@@ -210,16 +210,25 @@ async def get_all_profiles(db: Session = Depends(get_db)):
 
 @router.delete("/admin/clear-database", status_code=status.HTTP_200_OK)
 async def clear_all_profiles(db: Session = Depends(get_db)):
-    """Clear all health profiles from database (admin endpoint)"""
+    """Clear all health profiles and daily tracking data from database (admin endpoint)"""
     
-    # Get count before deletion for response
+    # Import DailyTracking model
+    from app.models.daily_tracking import DailyTracking
+    
+    # Get counts before deletion for response
     profile_count = db.query(HealthProfile).count()
+    tracking_count = db.query(DailyTracking).count()
     
-    # Delete all profiles
+    # Delete all daily tracking data first (due to potential foreign key constraints)
+    db.query(DailyTracking).delete()
+    
+    # Delete all health profiles
     db.query(HealthProfile).delete()
+    
     db.commit()
     
     return {
         "message": "Database cleared successfully",
-        "profiles_deleted": profile_count
+        "profiles_deleted": profile_count,
+        "tracking_entries_deleted": tracking_count
     }

@@ -12,7 +12,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Harmonia - FHA Recovery',
+  title: 'Pedal - FHA Recovery',
   description:
     'A gentle, supportive space for your FHA recovery journey. Track, learn, and thrive with compassion.',
 }

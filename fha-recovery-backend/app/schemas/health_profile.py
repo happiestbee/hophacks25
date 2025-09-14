@@ -5,7 +5,7 @@ from datetime import datetime
 
 class HealthProfileBase(BaseModel):
     """Base schema for health profile data"""
-    last_menstrual_period: Optional[str] = Field(None, description="Last menstrual period (flexible text)")
+    days_since_last_period: Optional[int] = Field(None, ge=0, le=3650, description="Days since last menstrual period")
     allergies: Optional[str] = Field(None, description="Food allergies and sensitivities")
     dietary_restrictions: Optional[str] = Field(None, description="Dietary restrictions")
     current_medications: Optional[str] = Field(None, description="Current medications")
@@ -44,7 +44,7 @@ class SurveyStepUpdate(BaseModel):
 class SurveyCompletionRequest(BaseModel):
     """Schema for completing the survey"""
     user_id: str = Field(..., description="User identifier")
-    last_menstrual_period: Optional[str] = None
+    days_since_last_period: Optional[int] = Field(None, ge=0, le=3650, description="Days since last menstrual period")
     allergies: Optional[str] = None
     dietary_restrictions: Optional[str] = None
     current_medications: Optional[str] = None

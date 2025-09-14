@@ -13,7 +13,7 @@ class HealthProfile(Base):
     user_id = Column(String, unique=True, index=True, nullable=False)  # User identifier
     
     # Cycle History
-    last_menstrual_period = Column(Text, nullable=True)  # Flexible text input
+    days_since_last_period = Column(Integer, nullable=True)  # Days since last menstrual period
     
     # Nutrition & Dietary Information
     allergies = Column(Text, nullable=True)  # Food allergies

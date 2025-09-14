@@ -1,11 +1,17 @@
+# Load environment variables FIRST before any other imports
+from dotenv import load_dotenv
+import os
+from pathlib import Path
+
+# Get the backend directory path and load .env file
+backend_dir = Path(__file__).parent.parent
+env_path = backend_dir / '.env'
+load_dotenv(dotenv_path=env_path)
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import health, bbt, meals, ai, health_profile, daily_tracking
+from app.routers import health, bbt, meals, ai, health_profile, daily_tracking, period_prediction, lstm_prediction
 from app.core.database import create_tables
-from dotenv import load_dotenv
-
-# Load environment variables
-load_dotenv()
 
 app = FastAPI(
     title="FHA Recovery API",
@@ -36,6 +42,8 @@ app.include_router(meals.router, prefix="/api/meals", tags=["meals"])
 app.include_router(ai.router, prefix="/api/ai", tags=["ai"])
 app.include_router(health_profile.router, prefix="/api/health-profile", tags=["health-profile"])
 app.include_router(daily_tracking.router)
+app.include_router(period_prediction.router)
+app.include_router(lstm_prediction.router)
 
 @app.get("/")
 async def root():

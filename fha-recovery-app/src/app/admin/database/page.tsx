@@ -10,7 +10,7 @@ interface HealthProfile {
   id: number;
   user_id: string;
   survey_completed: boolean;
-  last_menstrual_period: string | null;
+  days_since_last_period: number | null;
   allergies: string | null;
   dietary_restrictions: string | null;
   current_medications: string | null;
@@ -24,23 +24,10 @@ interface DailyTrackingEntry {
   id: number;
   user_id: string;
   tracking_date: string;
-  total_calories: number | null;
-  target_calories: number;
-  calories_from_breakfast: number | null;
-  calories_from_lunch: number | null;
-  calories_from_dinner: number | null;
-  calories_from_snacks: number | null;
-  morning_temp: number | null;
-  evening_temp: number | null;
-  energy_level: number | null;
-  mood_rating: number | null;
-  sleep_hours: number | null;
-  exercise_minutes: number | null;
-  water_glasses: number | null;
-  stress_level: number | null;
-  is_complete: boolean;
-  calorie_progress_percentage: number;
-  remaining_calories: number;
+  body_temperature: number | null;
+  heart_rate_variability: number | null;
+  calorie_deficit: number | null;
+  daily_notes: string | null;
   created_at: string;
   updated_at: string | null;
 }
@@ -204,9 +191,9 @@ export default function DatabaseViewerPage() {
                   </div>
                   <div className="text-center p-4 bg-gray-50 rounded-lg">
                     <div className="text-2xl font-bold text-[#C1A7E1]">
-                      {trackingData?.entries.filter(e => e.is_complete).length || 0}
+                      {trackingData?.entries.filter(e => e.body_temperature || e.heart_rate_variability || e.calorie_deficit).length || 0}
                     </div>
-                    <div className="text-sm text-gray-600">Complete Days</div>
+                    <div className="text-sm text-gray-600">Days with Data</div>
                   </div>
                 </div>
               ) : null}
@@ -290,10 +277,10 @@ export default function DatabaseViewerPage() {
                         </div>
                       </div>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div>
-                          <span className="font-medium text-gray-600">Last Period:</span>
-                          <p className="text-gray-800">{truncateText(profile.last_menstrual_period)}</p>
+                          <span className="font-medium text-gray-600">Days Since Last Period:</span>
+                          <p className="text-gray-800">{profile.days_since_last_period ? `${profile.days_since_last_period} days` : 'N/A'}</p>
                         </div>
                         <div>
                           <span className="font-medium text-gray-600">Allergies:</span>
@@ -347,79 +334,56 @@ export default function DatabaseViewerPage() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {trackingData?.entries.map((entry) => (
-                      <div key={entry.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex items-center gap-3">
-                            <div className="font-medium text-gray-800">
-                              {entry.user_id}
+                    {trackingData!.entries
+                      .filter(entry => entry.body_temperature || entry.heart_rate_variability || entry.calorie_deficit)
+                      .map((entry, index) => (
+                        <div key={entry.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <div className="font-medium text-gray-800">
+                                User {entry.user_id}
+                              </div>
+                              <Badge className="bg-blue-100 text-blue-800">
+                                {entry.tracking_date}
+                              </Badge>
+                              <Badge className="bg-green-100 text-green-800">
+                                <CheckCircle className="h-3 w-3 mr-1" /> Has Data
+                              </Badge>
                             </div>
-                            <Badge className="bg-blue-100 text-blue-800">
-                              {entry.tracking_date}
-                            </Badge>
-                            <Badge 
-                              variant={entry.is_complete ? "default" : "secondary"}
-                              className={entry.is_complete ? "bg-green-100 text-green-800" : "bg-orange-100 text-orange-800"}
-                            >
-                              {entry.is_complete ? (
-                                <><CheckCircle className="h-3 w-3 mr-1" /> Complete</>
-                              ) : (
-                                <><XCircle className="h-3 w-3 mr-1" /> Incomplete</>
-                              )}
-                            </Badge>
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            Created: {formatDate(entry.created_at)}
-                          </div>
-                        </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
-                          <div>
-                            <span className="font-medium text-gray-600">Calories:</span>
-                            <p className="text-gray-800">
-                              {entry.total_calories || 0} / {entry.target_calories} 
-                              <span className="text-xs text-gray-500 ml-1">
-                                ({entry.calorie_progress_percentage.toFixed(0)}%)
-                              </span>
-                            </p>
-                          </div>
-                          <div>
-                            <span className="font-medium text-gray-600">Temperature:</span>
-                            <p className="text-gray-800">
-                              {entry.morning_temp ? `${entry.morning_temp}°F` : 'N/A'}
-                              {entry.evening_temp && ` / ${entry.evening_temp}°F`}
-                            </p>
-                          </div>
-                          <div>
-                            <span className="font-medium text-gray-600">Energy/Mood:</span>
-                            <p className="text-gray-800">
-                              {entry.energy_level ? `${entry.energy_level}/10` : 'N/A'}
-                              {entry.mood_rating && ` / ${entry.mood_rating}/10`}
-                            </p>
-                          </div>
-                          <div>
-                            <span className="font-medium text-gray-600">Sleep/Exercise:</span>
-                            <p className="text-gray-800">
-                              {entry.sleep_hours ? `${entry.sleep_hours}h` : 'N/A'}
-                              {entry.exercise_minutes && ` / ${entry.exercise_minutes}min`}
-                            </p>
-                          </div>
-                        </div>
-                        
-                        {/* Meal breakdown */}
-                        {(entry.calories_from_breakfast || entry.calories_from_lunch || entry.calories_from_dinner || entry.calories_from_snacks) && (
-                          <div className="mt-3 pt-3 border-t border-gray-100">
-                            <span className="font-medium text-gray-600 text-xs">Meal Breakdown:</span>
-                            <div className="grid grid-cols-4 gap-2 mt-1 text-xs">
-                              <div>Breakfast: {entry.calories_from_breakfast || 0}</div>
-                              <div>Lunch: {entry.calories_from_lunch || 0}</div>
-                              <div>Dinner: {entry.calories_from_dinner || 0}</div>
-                              <div>Snacks: {entry.calories_from_snacks || 0}</div>
+                            <div className="text-sm text-gray-500">
+                              Created: {formatDate(entry.created_at)}
                             </div>
                           </div>
-                        )}
-                      </div>
-                    ))}
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
+                            {entry.body_temperature && (
+                              <div>
+                                <span className="font-medium text-gray-600">Body Temperature:</span>
+                                <p className="text-gray-800">{entry.body_temperature}°F</p>
+                              </div>
+                            )}
+                            {entry.heart_rate_variability && (
+                              <div>
+                                <span className="font-medium text-gray-600">HRV:</span>
+                                <p className="text-gray-800">{entry.heart_rate_variability}ms</p>
+                              </div>
+                            )}
+                            {entry.calorie_deficit !== null && entry.calorie_deficit !== undefined && (
+                              <div>
+                                <span className="font-medium text-gray-600">Calorie Deficit:</span>
+                                <p className="text-gray-800">{entry.calorie_deficit > 0 ? `+${entry.calorie_deficit}` : entry.calorie_deficit}</p>
+                              </div>
+                            )}
+                          </div>
+                          
+                          {entry.daily_notes && (
+                            <div className="mt-3 pt-3 border-t border-gray-100">
+                              <span className="font-medium text-gray-600 text-xs">Notes:</span>
+                              <p className="text-gray-700 text-sm mt-1">{entry.daily_notes}</p>
+                            </div>
+                          )}
+                        </div>
+                      ))}
                   </div>
                 )}
               </CardContent>

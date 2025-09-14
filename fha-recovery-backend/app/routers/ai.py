@@ -11,7 +11,13 @@ router = APIRouter()
 try:
     gemini_client = GeminiClient()
     nutrition_optimizer = NutritionOptimizer(gemini_client)
-except ValueError:
+    print("✅ Gemini client initialized successfully")
+except ValueError as e:
+    print(f"❌ Failed to initialize Gemini client: {e}")
+    gemini_client = None
+    nutrition_optimizer = None
+except Exception as e:
+    print(f"❌ Unexpected error initializing Gemini client: {e}")
     gemini_client = None
     nutrition_optimizer = None
 

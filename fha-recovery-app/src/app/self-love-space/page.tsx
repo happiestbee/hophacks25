@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, PanInfo } from 'framer-motion'
 import PageLayout from '@/components/layout/PageLayout'
-import MirrorBoard from '@/components/MirrorBoard'
+import MirrorBoard from '@/components/ui/MirrorBoard'
 
 export default function SelfLoveSpace() {
   console.log('🔥 SELF LOVE SPACE COMPONENT LOADED 🔥')

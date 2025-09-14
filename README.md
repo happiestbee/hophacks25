@@ -1,121 +1,114 @@
-# FHA Recovery Web Application
+# Harmonia - FHA Recovery Support App
 
-A gentle, supportive web application for Functional Hypothalamic Amenorrhea (FHA) recovery, built with Next.js and FastAPI.
+## 🌸 Project Overview
 
-## 🚀 Quick Start
+Harmonia is a compassionate, AI-powered web application designed to support individuals recovering from Functional Hypothalamic Amenorrhea (FHA). Built with empathy at its core, Harmonia provides gentle guidance, personalized insights, and encouraging tools to help users navigate their recovery journey with confidence and self-compassion.
 
+## 🎯 Problem Statement
+
+Functional Hypothalamic Amenorrhea affects countless individuals, often stemming from inadequate nutrition, excessive exercise, or chronic stress. Recovery requires not just medical guidance, but emotional support and lifestyle adjustments. Traditional health apps often focus on restriction and metrics that can be triggering for those in recovery. There was a clear need for a supportive, recovery-focused platform that celebrates progress without judgment.
+
+## ✨ Key Features
+
+### 🌺 Gentle Progress Tracking
+- **Blooming Flower Visualization**: Instead of harsh progress bars, users watch beautiful flowers bloom as they nourish their bodies
+- **Multiple Flower Varieties**: Daily randomization keeps the experience fresh and engaging
+- **Micro-celebrations**: Every small step forward is acknowledged and celebrated
+
+### 🍽️ AI-Powered Meal Analysis
+- **Gemini AI Integration**: Sophisticated meal analysis providing encouraging, specific nutritional feedback
+- **Image & Text Support**: Users can upload photos or describe meals in natural language
+- **Recovery-Focused Guidance**: All feedback emphasizes nourishment and energy rather than restriction
+
+### 📊 Predictive Health Insights
+- **LSTM Neural Networks**: Advanced machine learning models predict period recovery likelihood
+- **Cox Regression Analysis**: Statistical modeling provides 180-day recovery probability distributions
+- **Personalized Predictions**: Based on individual health profiles and tracking data
+
+### 💝 Self-Love Space
+- **Digital Vision Board**: Interactive space for affirmations, goals, and positive reminders
+- **Sticker System**: Playful elements to make self-care feel joyful rather than clinical
+- **Encouraging Messaging**: Every interaction reinforces self-compassion and progress
+
+### 📈 Comprehensive Tracking
+- **Daily Health Metrics**: Temperature, energy levels, mood, and nutrition tracking
+- **Gentle Data Visualization**: Beautiful charts that celebrate trends without triggering comparison
+- **Recovery Timeline**: Visual representation of the healing journey over time
+
+## 🛠️ Technical Architecture
+
+### Frontend (Next.js 14)
+- **React with TypeScript**: Type-safe, modern web application
+- **Tailwind CSS**: Beautiful, responsive design with custom color palette
+- **Framer Motion**: Smooth animations and delightful micro-interactions
+- **Radix UI**: Accessible, customizable component library
+
+### Backend (FastAPI)
+- **Python FastAPI**: High-performance API with automatic documentation
+- **SQLite Database**: Lightweight, reliable data storage
+- **Pydantic Schemas**: Data validation and serialization
+- **CORS Configuration**: Secure cross-origin resource sharing
+
+### AI & Machine Learning
+- **Google Gemini API**: Advanced natural language processing for meal analysis
+- **TensorFlow/Keras**: LSTM models for period recovery prediction
+- **Scikit-learn**: Cox regression for statistical health modeling
+- **NumPy/Pandas**: Data processing and analysis
+
+### Key Integrations
+- **NextAuth.js**: Secure authentication with Google OAuth
+- **Nivo Charts**: Beautiful, interactive data visualizations
+- **Lucide Icons**: Consistent, accessible iconography
+
+## 🎨 Design Philosophy
+
+Harmonia's design centers around **gentle encouragement** rather than clinical tracking. Every visual element, from the soft color palette (#87C4BB teal, #FFB4A2 peach, #C1A7E1 lavender) to the blooming flower metaphors, reinforces the message that recovery is a natural, beautiful process deserving of patience and self-love.
+
+## 🚀 Innovation Highlights
+
+1. **Empathetic AI**: First health app to use AI specifically trained for FHA recovery support
+2. **Predictive Modeling**: Advanced ML models providing personalized recovery timelines
+3. **Gentle Gamification**: Progress visualization that celebrates without triggering
+4. **Holistic Approach**: Combines nutrition, mental health, and medical insights
+5. **Recovery-First Design**: Every feature designed with eating disorder recovery principles
+
+## 🏆 Impact & Future Vision
+
+Harmonia represents a new paradigm in health technology - one that prioritizes mental wellbeing alongside physical recovery. By combining cutting-edge AI with compassionate design, we're creating a tool that doesn't just track health metrics, but actively supports healing.
+
+**Future Enhancements:**
+- Healthcare provider integration for collaborative care
+- Community features for peer support
+- Expanded AI capabilities for personalized meal planning
+- Integration with wearable devices for seamless tracking
+- Multilingual support for global accessibility
+
+## 🔧 Getting Started
+
+### Prerequisites
+- Node.js 18+ and npm
+- Python 3.9+ and Poetry
+- Google Gemini API key
+
+### Quick Start
 ```bash
-# Install all dependencies
-npm run install:all
+# Clone the repository
+git clone https://github.com/happiestbee/hophacks25.git
+cd hophacks25
 
-# Start both servers
-npm run dev
+# Start the application
+./cleanup-and-start.sh
 ```
 
-## 📁 Project Structure
+The application will be available at:
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8001
+- API Documentation: http://localhost:8001/docs
 
-```
-hophacks25/
-├── fha-recovery-app/          # Next.js Frontend
-├── fha-recovery-backend/      # FastAPI Backend
-├── docs/                      # Documentation
-├── package.json               # Root dependencies & scripts
-└── scripts/                   # Utility scripts
-```
+## 👥 Team
 
-## 🛠️ Available Commands
+Built with ❤️ for HopHacks 2025 by developers passionate about creating technology that heals rather than harms.
 
-### Development
-- `npm run dev` - Start both frontend and backend
-- `npm run dev:frontend` - Start only frontend
-- `npm run dev:backend` - Start only backend
+---
 
-### Installation
-- `npm run install:all` - Install all dependencies
-- `npm run install:frontend` - Install frontend dependencies
-- `npm run install:backend` - Install backend dependencies
-
-### Code Quality
-- `npm run format` - Format code in both projects
-- `npm run lint` - Lint code in both projects
-
-### Cleanup & Optimization
-- `npm run clean` - Remove build artifacts and OS files
-- `npm run clean:full` - Remove everything including node_modules
-- `npm run size` - Show current project size
-- `./build-production.sh` - Create optimized production build
-
-## 🌐 Server URLs
-
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:8000
-- **API Documentation**: http://localhost:8000/docs
-
-## 📊 Project Size
-
-The project is currently **~533MB** in development mode, which is normal for a full-stack Next.js + FastAPI application. See [SIZE_OPTIMIZATION.md](SIZE_OPTIMIZATION.md) for detailed information about size optimization.
-
-## 🧹 Size Optimization
-
-For a smaller project size:
-
-```bash
-# Remove build artifacts and OS files
-npm run clean
-
-# Remove everything including node_modules (minimal size)
-npm run clean:full
-
-# Reinstall when needed
-npm run install:all
-```
-
-## 🏗️ Production Build
-
-```bash
-# Create optimized production build
-./build-production.sh
-```
-
-## 📚 Documentation
-
-- [Startup Guide](STARTUP_GUIDE.md) - How to start the application
-- [Size Optimization](SIZE_OPTIMIZATION.md) - Detailed size optimization guide
-- [Requirements](docs/requirements.md) - Technical requirements and design principles
-- [Tasks](docs/tasks.md) - Development tasks and progress
-
-## 🎯 Features
-
-- **Gentle BBT Tracking**: Compassionate health monitoring
-- **Meal Logging**: Supportive nutrition tracking
-- **AI Suggestions**: Recovery-friendly meal recommendations
-- **Self-Love Space**: Affirmation board and daily encouragement
-- **Clean Design**: Fresh, minimalist aesthetic following FHA recovery principles
-
-## 🛠️ Tech Stack
-
-### Frontend
-- **Next.js** - React framework with SSR/SSG
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Utility-first styling
-- **shadcn/ui** - Component library
-- **Nivo** - Data visualization
-
-### Backend
-- **FastAPI** - Modern Python web framework
-- **Poetry** - Dependency management
-- **Pydantic** - Data validation
-- **scikit-learn** - Machine learning
-- **SQLAlchemy** - Database ORM
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run tests and linting
-5. Submit a pull request
-
-## 📄 License
-
-MIT License - see LICENSE file for details
+*Harmonia - Where technology meets compassion in the journey toward healing.*

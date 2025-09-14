@@ -88,3 +88,6 @@ venv.bak/
 *.tmp
 *.temp
 node_modules/
+
+# Documentation (internal development docs)
+docs/

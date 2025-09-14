@@ -1,8 +1,8 @@
-# Harmonia - FHA Recovery Support App
+# Pedal - FHA Recovery Support App
 
 ## 🌸 Project Overview
 
-Harmonia is a compassionate, AI-powered web application designed to support individuals recovering from Functional Hypothalamic Amenorrhea (FHA). Built with empathy at its core, Harmonia provides gentle guidance, personalized insights, and encouraging tools to help users navigate their recovery journey with confidence and self-compassion.
+Pedal is a compassionate, AI-powered web application designed to support individuals recovering from Functional Hypothalamic Amenorrhea (FHA). Built with empathy at its core, Pedal provides gentle guidance, personalized insights, and encouraging tools to help users navigate their recovery journey with confidence and self-compassion.
 
 ## 🎯 Problem Statement
 
@@ -62,7 +62,7 @@ Functional Hypothalamic Amenorrhea affects countless individuals, often stemming
 
 ## 🎨 Design Philosophy
 
-Harmonia's design centers around **gentle encouragement** rather than clinical tracking. Every visual element, from the soft color palette (#87C4BB teal, #FFB4A2 peach, #C1A7E1 lavender) to the blooming flower metaphors, reinforces the message that recovery is a natural, beautiful process deserving of patience and self-love.
+Pedal's design centers around **gentle encouragement** rather than clinical tracking. Every visual element, from the soft color palette (#87C4BB teal, #FFB4A2 peach, #C1A7E1 lavender) to the blooming flower metaphors, reinforces the message that recovery is a natural, beautiful process deserving of patience and self-love.
 
 ## 🚀 Innovation Highlights
 
@@ -74,7 +74,7 @@ Harmonia's design centers around **gentle encouragement** rather than clinical t
 
 ## 🏆 Impact & Future Vision
 
-Harmonia represents a new paradigm in health technology - one that prioritizes mental wellbeing alongside physical recovery. By combining cutting-edge AI with compassionate design, we're creating a tool that doesn't just track health metrics, but actively supports healing.
+Pedal represents a new paradigm in health technology - one that prioritizes mental wellbeing alongside physical recovery. By combining cutting-edge AI with compassionate design, we're creating a tool that doesn't just track health metrics, but actively supports healing.
 
 **Future Enhancements:**
 - Healthcare provider integration for collaborative care
@@ -111,4 +111,4 @@ Built with ❤️ for HopHacks 2025 by developers passionate about creating tech
 
 ---
 
-*Harmonia - Where technology meets compassion in the journey toward healing.*
+*Pedal - Where technology meets compassion in the journey toward healing.*
